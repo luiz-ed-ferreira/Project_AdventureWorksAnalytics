@@ -99,7 +99,7 @@ Project_AdventureWorksAnalytics/
 - Power BI version 2.157.879
 - Databricks Free Edition
 - Delta Lake
-- dbt Core 1.12.6
+- dbt Core 1.12.5
 - dbt Databricks 1.12.8
 
 > Attention! Consult the requirements.txt file for more information about python libraries used.
