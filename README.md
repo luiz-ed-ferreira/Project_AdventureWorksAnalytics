@@ -77,7 +77,7 @@ Project_AdventureWorksAnalytics/
 
 ```
 
-### Prerequisites & softwares
+### Prerequisites & Softwares
 
 - WSL Linux/Ubuntu for Windows 11 System
 - Python version 3.12.3
