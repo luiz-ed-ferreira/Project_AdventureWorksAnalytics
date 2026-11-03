@@ -1,12 +1,26 @@
 # Project Adventure Works e-commerce - Indicium AI's Analytics Engineer Certification
 
-### Project overview
+### Project Overview
 
 > A project developed as part of the final assessment process for Indicium AI's Analytics Engineer training program, based on a fictional e-commerce case for Adventure Works. The project integrates PostgreSQL, Databricks, and dbt to implement data ingestion (EL), data transformation, dimensional modeling, automated data quality testing, and a cloud-based Data Warehouse. The final solution aims to support strategic decision-making through interactive BI dashboards, providing actionable insights into sales performance, customers, products, and geographic trends.
 
-### Status & improvements
+> Attention! Please note that this notebook is partially written in Brazilian Portuguese, as it was developed as a test project to evaluate my skills as part of the Indicium AI's Data Analytics certification.
 
-In progress
+### Criterion
+
+- Design a conceptual Data Warehouse diagram.
+- Implement data ingestion (EL) from PostgreSQL, using only the adventure_works schema.
+- Implement staging, intermediate, and mart models.
+- Document mart tables and columns.
+- Reconcile 2011 gross sales against the accounting audit reference of $12,646,112.16.
+- Ensure all dbt models and tests execute successfully.
+- Provide access to the dashboard for evaluation.
+- Explicitly identify the product with the highest purchased quantity for the sales reason Promotion.
+- Present the fact table, dimensions, relationships, data quality tests, and dashboard insights.
+
+### Status & Improvements
+
+In progress [Under Review]
 
 - [ ] Environment and infrastructure setup.
 - [ ] Data ingestion from PostgreSQL into Databricks.
