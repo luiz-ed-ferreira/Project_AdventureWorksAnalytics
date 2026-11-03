@@ -39,7 +39,7 @@ In progress
 - Business rule validations.
 - Financial reconciliation against the accounting audit reference.
 
-> Attetntion! A mandatory reconciliation test will validate the 2011 gross sales amount against the accounting audit reference of $12,646,112.16.
+> Attention! A mandatory reconciliation test will validate the 2011 gross sales amount against the accounting audit reference of $12,646,112.16.
 
 ### Project Architecture
 
