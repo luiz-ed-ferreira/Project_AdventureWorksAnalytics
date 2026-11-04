@@ -112,9 +112,14 @@ Project_AdventureWorksAnalytics/
 │   └── project_planning
 │       └── Anexo B - Modelo de Planejamento de Projeto.docx
 │
+├── exploration/
+│   └── sql/
+│       ├── 01_source_inventory.sql
+│       ├── 02_source_profiling.sql
+│       └── 03_relationship_analysis.sql
+│
 ├── ingestion/
-│   ├── postgres/
-│   └── main_sql_advenure_works.sql
+│   └── postgres/
 │
 ├── models
 │   ├── intermediate
