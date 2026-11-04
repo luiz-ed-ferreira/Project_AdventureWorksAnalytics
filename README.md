@@ -8,8 +8,6 @@
 
 > The final solution will provide a reliable analytical foundation for business intelligence and strategic decision-making, delivering insights into sales performance, customers, products, and geographic trends through interactive Power BI dashboards.
 
-> Attention! Please note that this notebook is partially written in Brazilian Portuguese, as it was developed as a test project to evaluate my skills as part of the Indicium AI's Data Analytics certification.
-
 ### Criterion
 
 - Design a conceptual Data Warehouse diagram.
