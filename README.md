@@ -25,7 +25,7 @@
 In progress [Under Review]
 
 - [x] Environment and infrastructure setup.
-- [ ] Data ingestion from PostgreSQL into Databricks.
+- [x] Data ingestion from PostgreSQL into Databricks.
 - [ ] Source data exploration and profiling.
 - [ ] Conceptual and dimensional data modeling.
 - [ ] Data transformations using dbt.
