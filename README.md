@@ -43,6 +43,23 @@ In progress [Under Review]
 - **Intermediate**: Business logic implementation, data integration, and preparation of datasets for dimensional modeling.
 - **Marts**: Business-ready fact and dimension tables designed to support analytical queries, reporting, and BI dashboards.
 
+### Data Ingestion (EL)
+
+> The data ingestion process from PostgreSQL to Databricks has been successfully completed, following the [Indicium AI – Databricks Data Sources](https://bitbucket.org/indiciumtech/databricks-datasources/src/main/) implementation guide.
+
+> A total of 68 tables were ingested from the `adventure_works` source schema and made available in Databricks.
+
+**Source system:** PostgreSQL
+
+**Target platform:** Databricks
+
+**Unity Catalog:**
+- Catalog: `fea_academy`
+- Source schema: `adventure_works`
+- Ingested tables: 68
+
+> The ingested tables serve as the source layer for subsequent data exploration, transformation, and dimensional modeling. Only the `adventure_works` schema is considered within the scope of this project.
+
 ### Data Quality & Governance
 
 > Data quality and reliability are essential requirements throughout the pipeline.
@@ -96,7 +113,8 @@ Project_AdventureWorksAnalytics/
 │       └── Anexo B - Modelo de Planejamento de Projeto.docx
 │
 ├── ingestion/
-│   └── postgres/
+│   ├── postgres/
+│   └── main_sql_advenure_works.sql
 │
 ├── models
 │   ├── intermediate
