@@ -2,7 +2,11 @@
 
 ### Project Overview
 
-> A project developed as part of the final assessment process for Indicium AI's Analytics Engineer training program, based on a fictional e-commerce case for Adventure Works. The project integrates PostgreSQL, Databricks, and dbt to implement data ingestion (EL), data transformation, dimensional modeling, automated data quality testing, and a cloud-based Data Warehouse. The final solution aims to support strategic decision-making through interactive BI dashboards, providing actionable insights into sales performance, customers, products, and geographic trends.
+> This project is being developed as part of the final assessment for Indicium AI's Analytics Engineer Certification, based on a fictional e-commerce business case involving Adventure Works.
+
+> The goal is to design and implement an end-to-end Analytics Engineering solution using PostgreSQL, Databricks, Delta Lake, and dbt. The project covers data extraction and loading (EL), data exploration, dimensional modeling, data transformation, automated data quality testing, and financial reconciliation.
+
+> The final solution will provide a reliable analytical foundation for business intelligence and strategic decision-making, delivering insights into sales performance, customers, products, and geographic trends through interactive Power BI dashboards.
 
 > Attention! Please note that this notebook is partially written in Brazilian Portuguese, as it was developed as a test project to evaluate my skills as part of the Indicium AI's Data Analytics certification.
 
@@ -22,7 +26,7 @@
 
 In progress [Under Review]
 
-- [ ] Environment and infrastructure setup.
+- [x] Environment and infrastructure setup.
 - [ ] Data ingestion from PostgreSQL into Databricks.
 - [ ] Source data exploration and profiling.
 - [ ] Conceptual and dimensional data modeling.
@@ -33,13 +37,13 @@ In progress [Under Review]
 
 > Attention! All project code, configurations, and technical documentation will be maintained in GitHub to ensure version control, reproducibility, and traceability.
 
-### Data Processing Layers
+### Data Processing Architecture
 
-> The data pipeline is organized into three main transformation layers:
+> The data pipeline follows a layered architecture based on three main transformation stages (dbt Core):
 
-- **Staging**: Initial data standardization, column selection, renaming, and basic cleaning.
-- **Intermediate**: Business logic, data integration, and preparation for dimensional modeling.
-- **Marts**: Business-ready fact and dimension tables designed to support analytical queries and BI dashboards.
+- **Staging**: Source data standardization, column selection, renaming, type casting, and basic cleaning.
+- **Intermediate**: Business logic implementation, data integration, and preparation of datasets for dimensional modeling.
+- **Marts**: Business-ready fact and dimension tables designed to support analytical queries, reporting, and BI dashboards.
 
 ### Data Quality & Governance
 
@@ -55,40 +59,65 @@ In progress [Under Review]
 
 > Attention! A mandatory reconciliation test will validate the 2011 gross sales amount against the accounting audit reference of $12,646,112.16.
 
+### Pipeline Architecture
+
+```text
+                     PostgreSQL
+       (Transactional source: adventure_works)
+                         |
+                         v
+                    Ingestion
+             (Extraction and loading)
+                         |
+                         v
+              Databricks / Delta Lake
+               (Data storage layer)
+                         |
+                         v
+                     dbt Core
+          +---------------------------+
+          |         Staging           |
+          |       Intermediate        |
+          |           Marts           |
+          +---------------------------+
+                         |
+                         v
+                     Power BI
+             (Analytics and Reporting)
+```
+
 ### Project Architecture
 
 ```text
-
 Project_AdventureWorksAnalytics/
 │
-├── docs/
-│   ├── architecture/
-│   ├── data_model/
-│   └── project_planning/
+├── docs
+│   ├── architecture
+│   ├── data_model
+│   └── project_planning
+│       └── Anexo B - Modelo de Planejamento de Projeto.docx
 │
 ├── ingestion/
-│   └── README.md
+│   └── postgres/
 │
-├── databricks/
-│   ├── ingestion/
-│   └── exploration/
+├── models
+│   ├── intermediate
+│   ├── marts
+│   │   ├── core
+│   │   └── reporting
+│   └── staging
+│       └── adventure_works
 │
-├── dbt/
-│   ├── dbt_project.yml
-│   ├── models/
-│   │   ├── staging/
-│   │   ├── intermediate/
-│   │   └── marts/
-│   ├── tests/
-│   ├── macros/
-│   └── seeds/
+├── analyses/
+├── macros/
+├── seeds/
+├── snapshots/
+├── tests/
 │
-├── scripts/
-│
-├── .gitignore
+├── dbt_project.yml
+├── requirements.txt
 ├── README.md
-└── requirements.txt
-
+└── .gitignore
 ```
 
 ### Prerequisites & Softwares

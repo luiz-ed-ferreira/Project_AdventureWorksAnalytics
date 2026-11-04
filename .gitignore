@@ -3,7 +3,10 @@ __pycache__/
 *.py[codz]
 *$py.class
 
-#Enviroment
+#Environment variables and credentials
+.env
+.env.*
+!.env.example
 .venv_adventure/
 
 #Distribution / packaging
@@ -71,7 +74,7 @@ instance/
 #Sphinx documentation
 docs/_build/
 
-# PyBuilder
+#PyBuilder
 .pybuilder/
 target/
 
@@ -81,3 +84,22 @@ target/
 #IPython
 profile_default/
 ipython_config.py
+
+#dbt
+dbt_packages/
+logs/
+target/
+
+#Databricks
+.databrickscfg
+
+#dbt profiles
+profiles.yml
+
+#IDE
+.vscode/
+.idea/
+
+#Operating System
+.DS_Store
+Thumbs.db
