@@ -26,7 +26,7 @@ In progress [Under Review]
 
 - [x] Environment and infrastructure setup.
 - [x] Data ingestion from PostgreSQL into Databricks.
-- [ ] Source data exploration and profiling.
+- [x] Source profiling and data exploration.
 - [ ] Conceptual and dimensional data modeling.
 - [ ] Data transformations using dbt.
 - [ ] Automated data quality testing and financial reconciliation.
@@ -60,19 +60,60 @@ In progress [Under Review]
 
 > The ingested tables serve as the source layer for subsequent data exploration, transformation, and dimensional modeling. Only the `adventure_works` schema is considered within the scope of this project.
 
-### Data Quality & Governance
+### Source Data Exploration - Key Findings
 
-> Data quality and reliability are essential requirements throughout the pipeline.
+> The initial source data exploration covered the 68 tables ingested into the `fea_academy.adventure_works` schema, focusing on data structure, quality, referential integrity, and sales metrics.
 
-> The project will implement:
+#### Data Quality
 
-- Source-level validation and data quality tests.
-- Primary key and relationship integrity tests.
-- Null and duplicate record checks.
-- Business rule validations.
-- Financial reconciliation against the accounting audit reference.
+- 8 out of 9 candidate primary keys presented no NULL or duplicate values.
+- One NULL `countryregioncode` was identified for Namibia in `person_countryregion`.
+- All analyzed foreign key relationships passed referential integrity checks, with no unmatched records.
+- Customer records were classified into three categories:
+  - Person Only: 18,484
+  - Store Only: 701
+  - Person and Store: 635
+- All 31,465 sales orders have status code 5.
+- Some identifier columns were ingested as DOUBLE and date columns as STRING. Data types will be standardized in the staging layer.
 
-> Attention! A mandatory reconciliation test will validate the 2011 gross sales amount against the accounting audit reference of $12,646,112.16.
+#### Sales Overview
+
+> The source dataset contains:
+
+- 31,465 sales orders.
+- 121,317 order details.
+- 274,914 units sold.
+- Sales period from May 2011 to June 2014.
+
+> Financial metrics were defined as follows:
+
+| Metric | Definition |
+|---|---|
+| Gross Sales | UnitPrice * OrderQty |
+| Total Discounts | UnitPrice * OrderQty * UnitPriceDiscount |
+| Net Sales | UnitPrice * OrderQty * (1 - UnitPriceDiscount) |
+| Header Subtotal | Net value recorded in the sales order header |
+| Total Due | Subtotal + Tax + Freight |
+
+#### Financial Reconciliation
+
+> The annual financial analysis confirmed that 2011 gross sales totaled USD 12,646,112.16, exactly matching the required accounting reconciliation reference.
+
+> The order detail calculations also showed consistency with the header subtotal, with only minor decimal precision differences.
+
+#### Modeling Considerations
+
+> The exploration identified important requirements for the analytical model:
+
+- Preserve the many-to-many relationship between sales orders and sales reasons through a bridge table.
+- Keep billing and shipping addresses as separate geographic roles.
+- Preserve customers associated with both individuals and stores.
+- Handle missing credit card information without excluding valid orders.
+- Standardize source data types in the staging layer.
+- Keep gross sales, discounts, net sales, taxes, freight, and total due as separate measures.
+- Investigate the unusual sales reduction observed in June 2014 during the analytical architecture development.
+
+> These findings will guide the dimensional modeling, dbt transformations, and data quality tests.
 
 ### Pipeline Architecture
 
