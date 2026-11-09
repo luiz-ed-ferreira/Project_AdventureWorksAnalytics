@@ -1,0 +1,78 @@
+<mxfile host="Electron" agent="ChatGPT">
+  <diagram id="adventure-works-model" name="Dimensional Model">
+    <mxGraphModel dx="1414" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;" value="Adventure Works Analytics&lt;br&gt;Conceptual Dimensional Model" vertex="1">
+          <mxGeometry height="50" width="700" x="420" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="fact_sales" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;align=left;spacingLeft=8;spacingTop=5;fontStyle=1;" value="&lt;b&gt;FACT_SALES&lt;/b&gt;&lt;hr&gt;Grain: one row per sales order line&lt;br&gt;&lt;br&gt;PK: sales_line_key&lt;br&gt;FK: order_date_key&lt;br&gt;FK: due_date_key&lt;br&gt;FK: ship_date_key&lt;br&gt;FK: product_key&lt;br&gt;FK: customer_key&lt;br&gt;FK: ship_to_geography_key&lt;br&gt;FK: bill_to_geography_key&lt;br&gt;FK: credit_card_key&lt;br&gt;FK: salesperson_key&lt;br&gt;FK: territory_key&lt;br&gt;&lt;br&gt;Degenerate: salesorderid, salesorderdetailid&lt;br&gt;Attributes: order_status_code&lt;br&gt;&lt;br&gt;Measures:&lt;br&gt;order_quantity&lt;br&gt;gross_sales_amount&lt;br&gt;discount_amount&lt;br&gt;net_sales_amount&lt;br&gt;" vertex="1">
+          <mxGeometry height="440" width="430" x="450" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_date" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;align=left;spacingLeft=8;spacingTop=5;" value="&lt;b&gt;DIM_DATE&lt;/b&gt;&lt;hr&gt;PK: date_key&lt;br&gt;Full date&lt;br&gt;Day / month / quarter / year&lt;br&gt;Month name / weekday&lt;br&gt;&lt;br&gt;Role-playing:&lt;br&gt;Order Date&lt;br&gt;Due Date&lt;br&gt;Ship Date" vertex="1">
+          <mxGeometry height="190" width="260" x="80" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_product" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;align=left;spacingLeft=8;spacingTop=5;" value="&lt;b&gt;DIM_PRODUCT&lt;/b&gt;&lt;hr&gt;PK: product_key&lt;br&gt;product_id&lt;br&gt;Product name / number&lt;br&gt;Color / size / style&lt;br&gt;Product line / class&lt;br&gt;Subcategory&lt;br&gt;Category" vertex="1">
+          <mxGeometry height="190" width="260" x="410" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_customer" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;align=left;spacingLeft=8;spacingTop=5;" value="&lt;b&gt;DIM_CUSTOMER&lt;/b&gt;&lt;hr&gt;PK: customer_key&lt;br&gt;customer_id&lt;br&gt;Customer type&lt;br&gt;Person name&lt;br&gt;Store name&lt;br&gt;Preserve person/store/both" vertex="1">
+          <mxGeometry height="190" width="260" x="720" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_geo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;align=left;spacingLeft=8;spacingTop=5;" value="&lt;b&gt;DIM_GEOGRAPHY&lt;/b&gt;&lt;hr&gt;PK: geography_key&lt;br&gt;address_id&lt;br&gt;City / postal code&lt;br&gt;State / province&lt;br&gt;Country&lt;br&gt;&lt;br&gt;Role-playing:&lt;br&gt;Ship-To and Bill-To" vertex="1">
+          <mxGeometry height="190" width="260" x="1020" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_card" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;align=left;spacingLeft=8;spacingTop=5;" value="&lt;b&gt;DIM_CREDIT_CARD&lt;/b&gt;&lt;hr&gt;PK: credit_card_key&lt;br&gt;creditcard_id&lt;br&gt;Card type&lt;br&gt;&lt;br&gt;No card number stored" vertex="1">
+          <mxGeometry height="170" width="260" x="50" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_salesperson" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;align=left;spacingLeft=8;spacingTop=5;" value="&lt;b&gt;DIM_SALESPERSON&lt;/b&gt;&lt;hr&gt;PK: salesperson_key&lt;br&gt;business_entity_id&lt;br&gt;Salesperson name&lt;br&gt;Employee job title" vertex="1">
+          <mxGeometry height="150" width="260" x="70" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_territory" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;align=left;spacingLeft=8;spacingTop=5;" value="&lt;b&gt;DIM_SALES_TERRITORY&lt;/b&gt;&lt;hr&gt;PK: territory_key&lt;br&gt;territory_id&lt;br&gt;Territory name&lt;br&gt;Country / group" vertex="1">
+          <mxGeometry height="150" width="260" x="310" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="bridge" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;align=left;spacingLeft=8;spacingTop=5;" value="&lt;b&gt;BRIDGE_ORDER_SALES_REASON&lt;/b&gt;&lt;hr&gt;Grain: one row per order/reason association&lt;br&gt;&lt;br&gt;FK: salesorderid (degenerate order identifier)&lt;br&gt;FK: sales_reason_key&lt;br&gt;&lt;br&gt;Preserves the order-to-reason&lt;br&gt;many-to-many relationship" vertex="1">
+          <mxGeometry height="220" width="350" x="1020" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="dim_reason" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;align=left;spacingLeft=8;spacingTop=5;" value="&lt;b&gt;DIM_SALES_REASON&lt;/b&gt;&lt;hr&gt;PK: sales_reason_key&lt;br&gt;salesreason_id&lt;br&gt;Reason name&lt;br&gt;Reason type" vertex="1">
+          <mxGeometry height="140" width="260" x="700" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;align=left;spacing=8;" value="&lt;b&gt;Modeling rules&lt;/b&gt;&lt;br&gt;1. Sales measures are stored at order-line grain.&lt;br&gt;2. Do not directly join the reason bridge to order-line measures for aggregation: this duplicates revenue when an order has multiple reasons.&lt;br&gt;3. Geography is role-playing: keep Ship-To and Bill-To separate.&lt;br&gt;4. Keep missing credit card references; do not discard orders.&lt;br&gt;5. Order status is retained as a fact attribute until a broader status domain is confirmed." vertex="1">
+          <mxGeometry height="420" width="200" x="1340" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_date" edge="1" parent="1" source="dim_date" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERone;endFill=1;startArrow=ERmany;startFill=1;" target="fact_sales" value="1 : many">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_product" edge="1" parent="1" source="dim_product" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERone;endFill=1;startArrow=ERmany;startFill=1;" target="fact_sales" value="1 : many">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_customer" edge="1" parent="1" source="dim_customer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERone;endFill=1;startArrow=ERmany;startFill=1;" target="fact_sales" value="1 : many">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_geo" edge="1" parent="1" source="dim_geo" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERone;endFill=1;startArrow=ERmany;startFill=1;" target="fact_sales" value="1 : many (two roles)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_card" edge="1" parent="1" source="dim_card" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERone;endFill=1;startArrow=ERmany;startFill=1;" target="fact_sales" value="1 : many">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_salesperson" edge="1" parent="1" source="dim_salesperson" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERone;endFill=1;startArrow=ERmany;startFill=1;" target="fact_sales" value="1 : many">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_territory" edge="1" parent="1" source="dim_territory" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERone;endFill=1;startArrow=ERmany;startFill=1;" target="fact_sales" value="1 : many">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bridge" edge="1" parent="1" source="fact_sales" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeColor=#d6b656;endArrow=ERone;endFill=1;startArrow=ERmany;startFill=1;" target="bridge" value="Order-level association">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ld0zrYQB9FSwWhCyveeJ-3" connectable="0" parent="e_bridge" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;" value="many:1" vertex="1">
+          <mxGeometry relative="1" x="0.1284" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_reason" edge="1" parent="1" source="dim_reason" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERone;endFill=1;startArrow=ERmany;startFill=1;" target="bridge" value="1 : many">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

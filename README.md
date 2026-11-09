@@ -58,6 +58,10 @@ In progress [Under Review]
 - Source schema: `adventure_works`
 - Ingested tables: 68
 
+<p align="center">
+  <img src="docs/architecture/AdventureWorksERD.jpeg" alt="Adventure Works ERD">
+</p>
+
 > The ingested tables serve as the source layer for subsequent data exploration, transformation, and dimensional modeling. Only the `adventure_works` schema is considered within the scope of this project.
 
 ### Source Data Exploration - Key Findings
@@ -115,6 +119,36 @@ In progress [Under Review]
 
 > These findings will guide the dimensional modeling, dbt transformations, and data quality tests.
 
+### Dimensional Modeling
+
+> The dimensional model was designed to support the analytical requirements of the Adventure Works project, following dimensional modeling principles.
+
+> The model includes:
+
+- `fact_sales`: transactional fact table at sales order detail level.
+- `dim_date`: calendar dimension.
+- `dim_product`: product, subcategory, and category hierarchy.
+- `dim_customer`: customer information, including individuals and stores.
+- `dim_geography`: address, city, state, and country information.
+- `dim_credit_card`: credit card type.
+- `dim_salesperson`: salesperson and employee information.
+- `dim_sales_territory`: sales territory information.
+- `dim_sales_reason`: sales reason descriptions.
+- `bridge_order_sales_reason`: bridge table preserving the many-to-many relationship between sales orders and sales reasons.
+
+<p align="center">
+  <img src="docs/data_model/dimensional_model.png" alt="Conceptual Dimensional Model">
+</p>
+
+>The detailed dimensional model, including table grains, attributes, relationships, and modeling decisions, is available in the project documentation.
+
+#### Model Documentation
+
+- [Dimensional Model Documentation](docs/data_model/dimensional_model.md)
+- [Dimensional Model Diagram](docs/data_model/dimensional_model.drawio)
+
+The diagram is provided in editable Draw.io format.
+
 ### Pipeline Architecture
 
 ```text
@@ -148,8 +182,12 @@ In progress [Under Review]
 Project_AdventureWorksAnalytics/
 │
 ├── docs
-│   ├── architecture
-│   ├── data_model
+│   └── architecture
+│       └── AdventureWorksERD.jpeg
+│   └── data_model
+│       ├── dimensional_model.drawio
+│       ├── dimensional_model.png
+│       └── dimensional_model.md
 │   └── project_planning
 │       └── Anexo B - Modelo de Planejamento de Projeto.docx
 │
@@ -157,7 +195,8 @@ Project_AdventureWorksAnalytics/
 │   └── sql/
 │       ├── 01_source_inventory.sql
 │       ├── 02_source_profiling.sql
-│       └── 03_relationship_analysis.sql
+│       ├── 03_relationship_analysis.sql
+│       └── 04_supporting_tables_inventory.sql
 │
 ├── ingestion/
 │   └── postgres/
