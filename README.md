@@ -181,14 +181,14 @@ The diagram is provided in editable Draw.io format.
 ```text
 Project_AdventureWorksAnalytics/
 │
-├── docs
-│   └── architecture
-│       └── AdventureWorksERD.jpeg
-│   └── data_model
-│       ├── dimensional_model.drawio
-│       ├── dimensional_model.png
-│       └── dimensional_model.md
-│   └── project_planning
+├── docs/
+│   ├── architecture/
+│   │   └── AdventureWorksERD.jpeg
+│   ├── data_model/
+│   │   ├── dimensional_model.drawio
+│   │   ├── dimensional_model.png
+│   │   └── dimensional_model.md
+│   └── project_planning/
 │       └── Anexo B - Modelo de Planejamento de Projeto.docx
 │
 ├── exploration/
@@ -202,12 +202,25 @@ Project_AdventureWorksAnalytics/
 │   └── postgres/
 │
 ├── models
-│   ├── intermediate
-│   ├── marts
+│   ├── intermediate/
+│   ├── marts/
 │   │   ├── core
 │   │   └── reporting
-│   └── staging
-│       └── adventure_works
+│   └── staging/
+│       └── adventure_works/
+│           ├── sales/
+│           │   ├── _adventure_works__sources.yml
+│           │   ├── stg_sales__sales_order_header.sql
+│           │   ├── stg_sales__sales_order_detail.sql
+│           │   ├── stg_sales__customer.sql
+│           │   ├── stg_sales__sales_reason.sql
+│           │   ├── stg_sales__sales_order_header_sales_reason.sql
+│           │   ├── stg_sales__credit_card.sql
+│           │   ├── stg_sales__sales_person.sql
+│           │   └── _sales__models.yml
+│           ├── person/
+│           ├── production/
+│           └── humanresources/
 │
 ├── analyses/
 ├── macros/
