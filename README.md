@@ -201,15 +201,15 @@ Project_AdventureWorksAnalytics/
 ├── ingestion/
 │   └── postgres/
 │
-├── models
+├── models/
 │   ├── intermediate/
 │   ├── marts/
-│   │   ├── core
-│   │   └── reporting
+│   │   ├── core/
+│   │   └── reporting/
 │   └── staging/
 │       └── adventure_works/
+│           ├── _adventure_works__sources.yml
 │           ├── sales/
-│           │   ├── _adventure_works__sources.yml
 │           │   ├── stg_sales__sales_order_header.sql
 │           │   ├── stg_sales__sales_order_detail.sql
 │           │   ├── stg_sales__customer.sql
