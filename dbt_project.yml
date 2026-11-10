@@ -33,4 +33,4 @@ models:
       +materialized: table #Persist the results, ready for analysis
 
 #Notes: 
- #An important difference: a View stores the query definition, whereas a Table persists the results in Databricks
+  #An important difference -> A view stores the query definition, whereas a Table persists the results in Databricks
