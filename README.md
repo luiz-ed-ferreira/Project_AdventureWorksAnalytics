@@ -211,16 +211,35 @@ Project_AdventureWorksAnalytics/
 │           ├── _adventure_works__sources.yml
 │           ├── sales/
 │           │   ├── stg_sales__sales_order_header.sql
-│           │   ├── stg_sales__sales_order_detail.sql
-│           │   ├── stg_sales__customer.sql
-│           │   ├── stg_sales__sales_reason.sql
+│           │   ├── stg_sales__sales_order_header.yml
 │           │   ├── stg_sales__sales_order_header_sales_reason.sql
+│           │   ├── stg_sales__sales_order_header_sales_reason.yml
+│           │   ├── stg_sales__sales_order_detail.sql
+│           │   ├── stg_sales__sales_order_detail.yml
+│           │   ├── stg_sales__sales_reason.sql
+│           │   ├── stg_sales__sales_reason.yml
+│           │   ├── stg_sales__customer.sql
+│           │   ├── stg_sales__customer.yml
 │           │   ├── stg_sales__credit_card.sql
+│           │   ├── stg_sales__credit_card.yml
 │           │   ├── stg_sales__sales_person.sql
-│           │   └── _sales__models.yml
+│           │   └── stg_sales__sales_person.yml
 │           ├── person/
-│           ├── production/
-│           └── humanresources/
+│           │   ├── stg_person__person.sql
+│           │   ├── stg_person__person.yml
+│           │   ├── stg_person__address.sql
+│           │   ├── stg_person__address.yml
+│           │   ├── stg_person__state_province.sql
+│           │   ├── stg_person__state_province.yml
+│           │   ├── stg_person__country_region.sql
+│           │   └── stg_person__country_region.yml
+│           └── production/
+│               ├── stg_production__product.sql
+│               ├── stg_production__product.yml
+│               ├── stg_production__product_subcategory.sql
+│               ├── stg_production__product_subcategory.yml
+│               ├── stg_production__product_category.sql
+│               └── stg_production__product_category.yml
 │
 ├── analyses/
 ├── macros/
@@ -229,6 +248,8 @@ Project_AdventureWorksAnalytics/
 ├── tests/
 │
 ├── dbt_project.yml
+├── package-lock.yml
+├── packages.yml
 ├── requirements.txt
 ├── README.md
 └── .gitignore
