@@ -45,6 +45,21 @@ models:
 
 # dbt test --select stg_person__address stg_person__state_province stg_person__country_region
 
-# dbt test --select \
-#  relationships_stg_person__address_state_province_id__state_province_id__ref_stg_person__state_province \
-#  relationships_stg_person__state_province_country_region_code__country_region_code__ref_stg_person__country_region 
+# python - <<'PY'
+# import json
+# from pathlib import Path
+
+# manifest = json.loads(Path("target/manifest.json").read_text())
+
+# for unique_id, node in manifest["nodes"].items():
+#     if (
+#         node.get("resource_type") == "test"
+#         and node.get("test_metadata", {}).get("name") == "relationships"
+#     ):
+#         print(f"Test: {unique_id}")
+#         print(f"Model: {node.get('attached_node')}")
+#         print(f"Arguments: {node.get('test_metadata', {}).get('kwargs')}")
+#         print("-" * 60)
+# PY
+
+# dbt test --select "test_name:relationships"
