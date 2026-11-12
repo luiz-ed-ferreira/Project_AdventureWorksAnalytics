@@ -1,3 +1,4 @@
+#Database documentation:
 
 version: 2 #Version of the YAML structure used by dbt
 

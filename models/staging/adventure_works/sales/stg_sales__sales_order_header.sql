@@ -1,5 +1,5 @@
+-- Standardize sales order header data
 
--- Standardize sales order header data.
 SELECT
     CAST(salesorderid AS BIGINT) AS sales_order_id,
     CAST(revisionnumber AS INT) AS revision_number,
@@ -23,7 +23,7 @@ SELECT
     CAST(taxamt AS DECIMAL(19, 4)) AS tax_amount,
     CAST(freight AS DECIMAL(19, 4)) AS freight,
     CAST(totaldue AS DECIMAL(19, 4)) AS total_due,
-    comment AS comments,
+    CAST(comment AS STRING) AS comments,
     rowguid,
     CAST(modifieddate AS TIMESTAMP) AS modified_at
 

@@ -1,0 +1,63 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_sales__sales_order_header_sales_reason
+    description: >
+      Standardized association between sales orders and sales reasons.
+      One record per sales order and sales reason combination.
+      Preserves the many-to-many relationship between orders and reasons.
+
+    columns:
+      - name: sales_order_id
+        description: Identifier of the associated sales order.
+        data_tests:
+          - not_null
+
+      - name: sales_reason_id
+        description: Identifier of the associated sales reason.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sales__sales_reason')
+                field: sales_reason_id
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - sales_order_id
+              - sales_reason_id
+
+# View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT sales_order_id) AS distinct_orders,
+#     COUNT(DISTINCT sales_reason_id) AS distinct_reasons,
+#     COUNT(DISTINCT CONCAT(
+#         CAST(sales_order_id AS STRING),
+#         '-',
+#         CAST(sales_reason_id AS STRING)
+#     )) AS distinct_order_reason_pairs,
+#     COUNT_IF(sales_order_id IS NULL) AS null_order_ids,
+#     COUNT_IF(sales_reason_id IS NULL) AS null_reason_ids
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__sales_order_header_sales_reason`;
+
+# SELECT
+#     r.sales_reason_name,
+#     r.sales_reason_type,
+#     COUNT(*) AS total_associations,
+#     COUNT(DISTINCT br.sales_order_id) AS distinct_orders
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__sales_order_header_sales_reason` br
+# INNER JOIN `fea_academy`.`adventure_works_analytics`.`stg_sales__sales_reason` r
+#     ON br.sales_reason_id = r.sales_reason_id
+# GROUP BY
+#     r.sales_reason_name,
+#     r.sales_reason_type
+# ORDER BY total_associations DESC;

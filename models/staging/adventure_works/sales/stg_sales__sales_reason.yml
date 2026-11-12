@@ -1,0 +1,55 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_sales__sales_reason
+    description: >
+      Standardized sales reason data from the Adventure Works source.
+      One record per registered sales reason.
+
+    columns:
+      - name: sales_reason_id
+        description: Unique identifier of the sales reason.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: sales_reason_name
+        description: Name or description of the sales reason.
+        data_tests:
+          - not_null
+
+      - name: sales_reason_type
+        description: Category assigned to the sales reason.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Marketing
+                  - Other
+                  - Promotion
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT sales_reason_id) AS distinct_ids,
+#     COUNT_IF(sales_reason_id IS NULL) AS null_ids,
+#     COUNT_IF(sales_reason_name IS NULL) AS null_names,
+#     COUNT_IF(sales_reason_type IS NULL) AS null_types,
+#     COUNT(DISTINCT sales_reason_type) AS distinct_reason_types
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__sales_reason`;
+
+# SELECT
+#     sales_reason_id,
+#     sales_reason_name,
+#     sales_reason_type
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__sales_reason`
+# ORDER BY sales_reason_type, sales_reason_name;
+
+# dbt test --select stg_sales__sales_reason

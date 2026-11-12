@@ -1,0 +1,127 @@
+#View documentation:
+
+
+version: 2
+
+models:
+  - name: stg_sales__sales_order_header
+    description: >
+      Standardized sales order header data from the Adventure Works source.
+      One record per sales order.
+
+    columns:
+      - name: sales_order_id
+        description: Unique identifier of the sales order.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: revision_number
+        description: Revision number of the sales order.
+
+      - name: order_date
+        description: Date when the sales order was created.
+        data_tests:
+          - not_null
+
+      - name: due_date
+        description: Expected payment or fulfillment due date.
+
+      - name: ship_date
+        description: Date when the sales order was shipped.
+
+      - name: status
+        description: Numeric status code of the sales order.
+
+      - name: is_online_order
+        description: Indicates whether the order was placed online.
+
+      - name: purchase_order_number
+        description: Purchase order number provided by the customer, when available.
+
+      - name: account_number
+        description: Customer account reference associated with the order.
+
+      - name: customer_id
+        description: Identifier of the customer who placed the order.
+        data_tests:
+          - not_null
+
+      - name: salesperson_id
+        description: Identifier of the salesperson associated with the order, when available.
+
+      - name: territory_id
+        description: Identifier of the sales territory associated with the order.
+
+      - name: bill_to_address_id
+        description: Identifier of the billing address.
+
+      - name: ship_to_address_id
+        description: Identifier of the shipping destination address.
+
+      - name: ship_method_id
+        description: Identifier of the shipping method.
+
+      - name: credit_card_id
+        description: Identifier of the credit card used for payment, when available.
+
+      - name: credit_card_approval_code
+        description: Credit card transaction approval code, when available.
+
+      - name: currency_rate_id
+        description: Identifier of the exchange rate applied to the order, when available.
+
+      - name: subtotal
+        description: Order subtotal before taxes and freight, after item discounts.
+
+      - name: tax_amount
+        description: Total tax amount charged for the order.
+
+      - name: freight
+        description: Shipping and freight charges associated with the order.
+
+      - name: total_due
+        description: Total amount due, including subtotal, taxes, and freight.
+
+      - name: comments
+        description: Additional comments associated with the sales order, when available.
+
+      - name: rowguid
+        description: Globally unique identifier assigned to the source record.
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT_IF(sales_order_id IS NULL) AS null_sales_order_id,
+#     COUNT_IF(revision_number IS NULL) AS null_revision_number,
+#     COUNT_IF(order_date IS NULL) AS null_order_date,
+#     COUNT_IF(due_date IS NULL) AS null_due_date,
+#     COUNT_IF(ship_date IS NULL) AS null_ship_date,
+#     COUNT_IF(status IS NULL) AS null_status,
+#     COUNT_IF(is_online_order IS NULL) AS null_is_online_order,
+#     COUNT_IF(purchase_order_number IS NULL) AS null_purchase_order_number,
+#     COUNT_IF(account_number IS NULL) AS null_account_number,
+#     COUNT_IF(customer_id IS NULL) AS null_customer_id,
+#     COUNT_IF(salesperson_id IS NULL) AS null_salesperson_id,
+#     COUNT_IF(territory_id IS NULL) AS null_territory_id,
+#     COUNT_IF(bill_to_address_id IS NULL) AS null_bill_to_address_id,
+#     COUNT_IF(ship_to_address_id IS NULL) AS null_ship_to_address_id,
+#     COUNT_IF(ship_method_id IS NULL) AS null_ship_method_id,
+#     COUNT_IF(credit_card_id IS NULL) AS null_credit_card_id,
+#     COUNT_IF(credit_card_approval_code IS NULL) AS null_credit_card_approval_code,
+#     COUNT_IF(currency_rate_id IS NULL) AS null_currency_rate_id,
+#     COUNT_IF(subtotal IS NULL) AS null_subtotal,
+#     COUNT_IF(tax_amount IS NULL) AS null_tax_amount,
+#     COUNT_IF(freight IS NULL) AS null_freight,
+#     COUNT_IF(total_due IS NULL) AS null_total_due,
+#     COUNT_IF(comments IS NULL) AS null_comments,
+#     COUNT_IF(rowguid IS NULL) AS null_rowguid,
+#     COUNT_IF(modified_at IS NULL) AS null_modified_at
+
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__sales_order_header`;
+
+# dbt test --select stg_sales__sales_order_header

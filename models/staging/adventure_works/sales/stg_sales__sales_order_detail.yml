@@ -1,0 +1,73 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_sales__sales_order_detail
+    description: >
+      Standardized sales order detail data from the Adventure Works source.
+      One record per sales order line item.
+
+    columns:
+      - name: sales_order_id
+        description: Identifier of the sales order.
+        data_tests:
+          - not_null
+
+      - name: sales_order_detail_id
+        description: Unique identifier of the sales order detail line.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: carrier_tracking_number
+        description: Shipment carrier tracking number.
+
+      - name: order_quantity
+        description: Number of units purchased in the order detail.
+        data_tests:
+          - not_null
+
+      - name: product_id
+        description: Identifier of the purchased product.
+        data_tests:
+          - not_null
+
+      - name: special_offer_id
+        description: Identifier of the special offer applied to the item.
+
+      - name: unit_price
+        description: Selling price per unit before discount.
+        data_tests:
+          - not_null
+
+      - name: unit_price_discount
+        description: Discount percentage applied to the unit price.
+        data_tests:
+          - not_null
+
+      - name: rowguid
+        description: Source system row globally unique identifier.
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT sales_order_detail_id) AS distinct_detail_ids,
+#     COUNT(DISTINCT sales_order_id) AS distinct_orders,
+#     COUNT_IF(sales_order_id IS NULL) AS null_order_ids,
+#     COUNT_IF(sales_order_detail_id IS NULL) AS null_detail_ids,
+#     COUNT_IF(product_id IS NULL) AS null_product_ids,
+#     COUNT_IF(order_quantity IS NULL) AS null_quantities,
+#     MIN(order_quantity) AS min_quantity,
+#     MAX(order_quantity) AS max_quantity,
+#     SUM(order_quantity) AS total_quantity,
+#     MIN(unit_price) AS min_unit_price,
+#     MAX(unit_price) AS max_unit_price,
+#     SUM(unit_price * order_quantity) AS gross_sales
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__sales_order_detail`;
+
+# dbt test --select stg_sales__sales_order_detail
