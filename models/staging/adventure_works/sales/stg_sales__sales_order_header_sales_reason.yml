@@ -61,3 +61,5 @@ models:
 #     r.sales_reason_name,
 #     r.sales_reason_type
 # ORDER BY total_associations DESC;
+
+# dbt test --select stg_sales__sales_order_header_sales_reason

@@ -1,0 +1,48 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_sales__credit_card
+    description: >
+      Standardized credit card reference data.
+      Sensitive card numbers and unused expiration details
+      are intentionally excluded.
+      One record per credit card.
+
+    columns:
+      - name: credit_card_id
+        description: Unique identifier of the credit card.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: card_type
+        description: Credit card brand or type.
+        data_tests:
+          - not_null
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# SELECT
+#     'SOURCE' AS layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT creditcardid) AS distinct_credit_cards,
+#     COUNT_IF(creditcardid IS NULL) AS null_credit_card_ids,
+#     COUNT_IF(cardtype IS NULL) AS null_card_types
+# FROM `fea_academy`.`adventure_works`.`sales_creditcard`
+
+# UNION ALL
+
+# SELECT
+#     'STAGING' AS layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT credit_card_id) AS distinct_credit_cards,
+#     COUNT_IF(credit_card_id IS NULL) AS null_credit_card_ids,
+#     COUNT_IF(card_type IS NULL) AS null_card_types
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__credit_card`;
+
+# dbt test --select stg_sales__credit_card

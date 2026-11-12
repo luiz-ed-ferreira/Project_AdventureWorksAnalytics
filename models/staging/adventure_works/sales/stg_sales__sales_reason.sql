@@ -1,4 +1,3 @@
-
 -- Standardize sales reason data
 
 SELECT

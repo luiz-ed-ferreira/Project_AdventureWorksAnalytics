@@ -121,7 +121,6 @@ models:
 #     COUNT_IF(comments IS NULL) AS null_comments,
 #     COUNT_IF(rowguid IS NULL) AS null_rowguid,
 #     COUNT_IF(modified_at IS NULL) AS null_modified_at
-
 # FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__sales_order_header`;
 
 # dbt test --select stg_sales__sales_order_header

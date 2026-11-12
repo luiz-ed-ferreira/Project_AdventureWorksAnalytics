@@ -1,0 +1,79 @@
+
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_sales__customer
+    description: >
+      Standardized customer data from the Adventure Works source.
+      One record per customer.
+
+    columns:
+      - name: customer_id
+        description: Unique identifier of the customer.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: person_id
+        description: Identifier of the associated person, when available.
+
+      - name: store_id
+        description: Identifier of the associated store, when available.
+
+      - name: territory_id
+        description: Identifier of the assigned sales territory.
+
+      - name: rowguid
+        description: Globally unique identifier assigned to the source record.
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# SELECT
+#     'SOURCE' AS data_layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT customerid) AS distinct_customers,
+#     COUNT_IF(customerid IS NULL) AS null_customer_ids
+# FROM `fea_academy`.`adventure_works`.`sales_customer`
+
+# UNION ALL
+
+# SELECT
+#     'STAGING' AS data_layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT customer_id) AS distinct_customers,
+#     COUNT_IF(customer_id IS NULL) AS null_customer_ids
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__customer`;
+
+# SELECT
+#     CASE
+#         WHEN person_id IS NOT NULL AND store_id IS NOT NULL
+#             THEN 'PERSON_AND_STORE'
+#         WHEN person_id IS NOT NULL
+#             THEN 'PERSON_ONLY'
+#         WHEN store_id IS NOT NULL
+#             THEN 'STORE_ONLY'
+#         ELSE 'NEITHER'
+#     END AS customer_type,
+#     COUNT(*) AS total_customers
+
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__customer`
+
+# GROUP BY 1
+# ORDER BY 1;
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT_IF(territory_id IS NULL) AS null_territory_ids,
+#     COUNT_IF(rowguid IS NULL) AS null_rowguids,
+#     COUNT_IF(modified_at IS NULL) AS null_modified_at,
+#     COUNT(DISTINCT territory_id) AS distinct_territories,
+#     MIN(modified_at) AS first_modified_at,
+#     MAX(modified_at) AS last_modified_at
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__customer`;
+
+# dbt test --select stg_sales__customer

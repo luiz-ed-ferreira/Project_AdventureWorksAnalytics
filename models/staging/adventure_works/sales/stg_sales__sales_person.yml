@@ -1,0 +1,71 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_sales__sales_person
+    description: >
+      Standardized sales person data, including sales targets,
+      bonuses, commissions, and sales performance metrics.
+      One record per sales person.
+
+    columns:
+      - name: sales_person_id
+        description: Unique identifier of the sales person, based on business entity ID.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: territory_id
+        description: Identifier of the assigned sales territory.
+
+      - name: sales_quota
+        description: Sales quota assigned to the sales person.
+
+      - name: bonus
+        description: Bonus amount assigned to the sales person.
+
+      - name: commission_pct
+        description: Commission percentage assigned to the sales person.
+
+      - name: sales_ytd
+        description: Year-to-date sales amount.
+
+      - name: sales_last_year
+        description: Sales amount recorded in the previous year.
+
+      - name: rowguid
+        description: Globally unique identifier assigned to the source record.
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# SELECT
+#     'SOURCE' AS layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT businessentityid) AS distinct_sales_people,
+#     COUNT_IF(businessentityid IS NULL) AS null_ids,
+#     COUNT_IF(territoryid IS NULL) AS null_territories,
+#     SUM(salesquota) AS total_sales_quota,
+#     SUM(bonus) AS total_bonus,
+#     SUM(salesytd) AS total_sales_ytd,
+#     SUM(saleslastyear) AS total_sales_last_year
+# FROM `fea_academy`.`adventure_works`.`sales_salesperson`
+
+# UNION ALL
+
+# SELECT
+#     'STAGING' AS layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT sales_person_id) AS distinct_sales_people,
+#     COUNT_IF(sales_person_id IS NULL) AS null_ids,
+#     COUNT_IF(territory_id IS NULL) AS null_territories,
+#     SUM(sales_quota) AS total_sales_quota,
+#     SUM(bonus) AS total_bonus,
+#     SUM(sales_ytd) AS total_sales_ytd,
+#     SUM(sales_last_year) AS total_sales_last_year
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__sales_person`;
+
+# dbt test --select stg_sales__sales_person
