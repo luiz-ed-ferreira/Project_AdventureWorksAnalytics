@@ -1,0 +1,71 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_person__address
+    description: >
+      Standardized address data containing street, city,
+      state province, and postal code attributes.
+      Spatial coordinates are intentionally excluded.
+      One record per address.
+
+    columns:
+      - name: address_id
+        description: Unique identifier of the address.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: address_line_1
+        description: Primary street address.
+
+      - name: address_line_2
+        description: Additional street address information, when available.
+
+      - name: city
+        description: City associated with the address.
+        data_tests:
+          - not_null
+
+      - name: state_province_id
+        description: Identifier of the associated state or province.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_person__state_province')
+                field: state_province_id
+
+      - name: postal_code
+        description: Postal or ZIP code.
+
+      - name: rowguid
+        description: Globally unique identifier assigned to the source record.
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# SELECT
+#     'SOURCE' AS layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT addressid) AS distinct_addresses,
+#     COUNT_IF(addressid IS NULL) AS null_address_ids,
+#     COUNT_IF(city IS NULL) AS null_cities,
+#     COUNT_IF(stateprovinceid IS NULL) AS null_state_province_ids
+# FROM `fea_academy`.`adventure_works`.`person_address`
+
+# UNION ALL
+
+# SELECT
+#     'STAGING' AS layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT address_id) AS distinct_addresses,
+#     COUNT_IF(address_id IS NULL) AS null_address_ids,
+#     COUNT_IF(city IS NULL) AS null_cities,
+#     COUNT_IF(state_province_id IS NULL) AS null_state_province_ids
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_person__address`;
+
+# dbt test --select stg_person__address

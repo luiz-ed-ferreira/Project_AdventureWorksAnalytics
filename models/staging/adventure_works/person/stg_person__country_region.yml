@@ -1,0 +1,50 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_person__country_region
+    description: >
+      Standardized country and region reference data.
+      Source country codes are preserved without imputing missing values.
+      One record per country or region.
+
+    columns:
+      - name: country_region_code
+        description: Country or region code assigned by the source system.
+        data_tests:
+          - unique
+
+      - name: country_region_name
+        description: Country or region name.
+        data_tests:
+          - not_null
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# SELECT
+#     'SOURCE' AS layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT countryregioncode) AS distinct_country_codes,
+#     COUNT_IF(countryregioncode IS NULL) AS null_country_codes,
+#     COUNT_IF(name IS NULL) AS null_country_names
+# FROM `fea_academy`.`adventure_works`.`person_countryregion`
+
+# UNION ALL
+
+# SELECT
+#     'STAGING' AS layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT country_region_code) AS distinct_country_codes,
+#     COUNT_IF(country_region_code IS NULL) AS null_country_codes,
+#     COUNT_IF(country_region_name IS NULL) AS null_country_names
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_person__country_region`;
+
+# dbt test --select stg_person__address stg_person__state_province stg_person__country_region
+
+# dbt test --select \
+#  relationships_stg_person__address_state_province_id__state_province_id__ref_stg_person__state_province \
+#  relationships_stg_person__state_province_country_region_code__country_region_code__ref_stg_person__country_region 
