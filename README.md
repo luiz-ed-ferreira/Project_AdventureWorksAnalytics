@@ -20,6 +20,16 @@
 - Explicitly identify the product with the highest purchased quantity for the sales reason Promotion.
 - Present the fact table, dimensions, relationships, data quality tests, and dashboard insights.
 
+### Business Questions
+
+- **Sales Performance:** Analyze the number of orders, quantity purchased, and total sales amount by product, credit card type, sales reason, sales date, customer, order status, city, state, and country.
+- **Average Order Value (AOV):** Identify products with the highest average order value by month, year, city, state, and country.
+  - **AOV** = (Gross Sales − Discounts) / Number of Orders.
+- **Top 10 Customers:** Rank the top 10 customers by total sales amount, with filters for product, credit card type, sales reason, sales date, order status, city, state, and country.
+- **Top 5 Cities:** Identify the five cities with the highest total sales amount, with filters for product, credit card type, sales reason, sales date, customer, order status, city, state, and country.
+- **Sales Trends:** Analyze the number of orders, quantity purchased, and total sales amount by month and year using time-series charts.
+- **Promotion Analysis:** Identify the product with the highest quantity of units purchased for the "Promotion" sales reason.
+
 ### Status & Improvements
 
 In progress [Under Review]
@@ -27,7 +37,7 @@ In progress [Under Review]
 - [x] Environment and infrastructure setup.
 - [x] Data ingestion from PostgreSQL into Databricks.
 - [x] Source profiling and data exploration.
-- [ ] Conceptual and dimensional data modeling.
+- [x] Conceptual and dimensional data modeling.
 - [ ] Data transformations using dbt.
 - [ ] Automated data quality testing and financial reconciliation.
 - [ ] Interactive dashboard development.
@@ -35,20 +45,32 @@ In progress [Under Review]
 
 > Attention! All project code, configurations, and technical documentation will be maintained in GitHub to ensure version control, reproducibility, and traceability.
 
-### Data Processing Architecture
+### Pipeline Architecture
 
-> The data pipeline follows a layered architecture based on three main transformation stages (dbt Core):
-
-- **Staging**: Source data standardization, column selection, renaming, type casting, and basic cleaning.
-- **Intermediate**: Business logic implementation, data integration, and preparation of datasets for dimensional modeling.
-- **Marts**: Business-ready fact and dimension tables designed to support analytical queries, reporting, and BI dashboards.
-
-#### Staging Layer
-
-- The staging layer contains 14 standardized dbt models across Sales, Person, and Production domains.
-- All models are materialized as Databricks views and include documented columns, standardized data types, and data quality tests.
-
-> See the [Staging Layer Documentation](docs/data_model/staging_layer.md) for the complete model inventory, transformation conventions, validation results, and data quality decisions.
+```text
+                     PostgreSQL
+       (Transactional source: adventure_works)
+                         |
+                         v
+                    Ingestion
+             (Extraction and loading)
+                         |
+                         v
+              Databricks / Delta Lake
+               (Data storage layer)
+                         |
+                         v
+                     dbt Core
+          +---------------------------+
+          |         Staging           |
+          |       Intermediate        |
+          |           Marts           |
+          +---------------------------+
+                         |
+                         v
+                     Power BI
+             (Analytics and Reporting)
+```
 
 ### Data Ingestion (EL)
 
@@ -101,7 +123,7 @@ In progress [Under Review]
 | Metric | Definition |
 |---|---|
 | Gross Sales | UnitPrice * OrderQty |
-| Total Discounts | UnitPrice * OrderQty * UnitPriceDiscount |
+| Discount Amount | UnitPrice * OrderQty * UnitPriceDiscount |
 | Net Sales | UnitPrice * OrderQty * (1 - UnitPriceDiscount) |
 | Header Subtotal | Net value recorded in the sales order header |
 | Total Due | Subtotal + Tax + Freight |
@@ -156,32 +178,20 @@ In progress [Under Review]
 
 The diagram is provided in editable Draw.io format.
 
-### Pipeline Architecture
+### Data Processing Architecture
 
-```text
-                     PostgreSQL
-       (Transactional source: adventure_works)
-                         |
-                         v
-                    Ingestion
-             (Extraction and loading)
-                         |
-                         v
-              Databricks / Delta Lake
-               (Data storage layer)
-                         |
-                         v
-                     dbt Core
-          +---------------------------+
-          |         Staging           |
-          |       Intermediate        |
-          |           Marts           |
-          +---------------------------+
-                         |
-                         v
-                     Power BI
-             (Analytics and Reporting)
-```
+> The data pipeline follows a layered architecture based on three main transformation stages (dbt Core):
+
+- **Staging**: Source data standardization, column selection, renaming, type casting, and basic cleaning.
+- **Intermediate**: Business logic implementation, data integration, and preparation of datasets for dimensional modeling.
+- **Marts**: Business-ready fact and dimension tables designed to support analytical queries, reporting, and BI dashboards.
+
+#### Staging Layer
+
+- The staging layer contains 14 standardized dbt models across Sales, Person, and Production domains.
+- All models are materialized as Databricks views and include documented columns, standardized data types, and data quality tests.
+
+> See the [Staging Layer Documentation](docs/data_model/staging_layer.md) for the complete model inventory, transformation conventions, validation results, and data quality decisions.
 
 ### Project Architecture
 
