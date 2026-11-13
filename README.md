@@ -227,6 +227,13 @@ Project_AdventureWorksAnalytics/
 │
 ├── models/
 │   ├── intermediate/
+│   │   ├── sales/
+│   │   │   ├── int_sales__order_details.sql
+│   │   │   ├── int_sales__order_details.yml
+│   │   │   ├── int_sales__order_reasons.sql
+│   │   │   └── int_sales__order_reasons.yml   
+│   │   ├── person/
+│   │   └── production/
 │   ├── marts/
 │   │   ├── core/
 │   │   └── reporting/

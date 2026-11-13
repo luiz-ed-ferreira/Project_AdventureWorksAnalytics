@@ -1,6 +1,6 @@
 # Intermediate Layer
 
-## 1. Overview
+## Overview
 
 The Intermediate layer integrates and enriches standardized data from the Staging layer, preparing it for dimensional modeling and business analysis.
 
@@ -14,13 +14,13 @@ Its main responsibilities are:
 
 Intermediate models are materialized as views.
 
-## 2. Model Inventory
+## Model Inventory
 
 | Model | Description | Grain |
 |---|---|---|
 | `int_sales__order_details` | Integrates sales order details with sales order header attributes and calculates financial measures. | One row per sales order detail. |
 
-## 3. Model: int_sales__order_details
+## Model: int_sales__order_details
 
 ### Purpose
 
@@ -93,7 +93,7 @@ Financial measures use `DECIMAL(19,4)` to preserve decimal precision during calc
 
 Order dates and modification timestamps retain their standardized types from the Staging layer.
 
-## 4. Data Quality and Validation
+## Data Quality and Validation
 
 The model was successfully executed using dbt.
 
@@ -114,7 +114,7 @@ The following validations were completed:
 
 The model preserves the expected grain and contains no duplicate sales order detail records.
 
-## 5. Financial Reconciliation
+## Financial Reconciliation
 
 Annual financial measures were validated against the source data.
 
@@ -131,7 +131,7 @@ The mandatory business reconciliation requirement was achieved:
 
 Minor differences may remain between the aggregated item-level net sales and the source sales order header subtotal due to decimal precision and rounding. These differences are retained transparently rather than artificially adjusting the item-level measures.
 
-## 6. Execution and Testing
+## Execution and Testing
 
 Model execution:
 
@@ -147,7 +147,7 @@ Referential integrity tests:
 
 All commands completed successfully.
 
-## 7. Next Steps
+## Next Steps
 
 The next Intermediate models will address additional business relationships and transformations required for dimensional modeling.
 
