@@ -43,6 +43,13 @@ In progress [Under Review]
 - **Intermediate**: Business logic implementation, data integration, and preparation of datasets for dimensional modeling.
 - **Marts**: Business-ready fact and dimension tables designed to support analytical queries, reporting, and BI dashboards.
 
+#### Staging Layer
+
+- The staging layer contains 14 standardized dbt models across Sales, Person, and Production domains.
+- All models are materialized as Databricks views and include documented columns, standardized data types, and data quality tests.
+
+> See the [Staging Layer Documentation](docs/data_model/staging_layer.md) for the complete model inventory, transformation conventions, validation results, and data quality decisions.
+
 ### Data Ingestion (EL)
 
 > The data ingestion process from PostgreSQL to Databricks has been successfully completed, following the [Indicium AI – Databricks Data Sources](https://bitbucket.org/indiciumtech/databricks-datasources/src/main/) implementation guide.

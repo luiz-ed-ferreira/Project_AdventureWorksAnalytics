@@ -1,0 +1,70 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_production__product_subcategory
+    description: >
+      Standardized product subcategory reference data.
+      Each record represents one product subcategory
+      associated with a product category.
+
+    columns:
+      - name: product_subcategory_id
+        description: Identifier of the associated product subcategory.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_production__product_subcategory')
+                field: product_subcategory_id
+
+      - name: product_category_id
+        description: Identifier of the associated product category.
+        data_tests:
+          - not_null
+
+      - name: product_subcategory_name
+        description: Name of the product subcategory.
+        data_tests:
+          - not_null
+
+      - name: rowguid
+        description: Globally unique identifier assigned to the source record.
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# SELECT
+#     'SOURCE' AS layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT productsubcategoryid) AS distinct_subcategories,
+#     COUNT(*) - COUNT(productsubcategoryid) AS null_subcategory_ids,
+#     COUNT(*) - COUNT(productcategoryid) AS null_category_ids,
+#     COUNT(*) - COUNT(name) AS null_names
+# FROM `fea_academy`.`adventure_works`.`production_productsubcategory`
+
+# UNION ALL
+
+# SELECT
+#     'STAGING' AS layer,
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT product_subcategory_id) AS distinct_subcategories,
+#     COUNT(*) - COUNT(product_subcategory_id) AS null_subcategory_ids,
+#     COUNT(*) - COUNT(product_category_id) AS null_category_ids,
+#     COUNT(*) - COUNT(product_subcategory_name) AS null_names
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_production__product_subcategory`;
+
+# SELECT
+#     COUNT(*) AS total_subcategories,
+#     COUNT(DISTINCT s.productsubcategoryid) AS distinct_subcategories,
+#     COUNT(c.productcategoryid) AS matched_categories,
+#     COUNT(*) - COUNT(c.productcategoryid) AS unmatched_categories
+# FROM `fea_academy`.`adventure_works`.`production_productsubcategory` s
+# LEFT JOIN `fea_academy`.`adventure_works`.`production_productcategory` c
+#     ON s.productcategoryid = c.productcategoryid;
+
+# dbt test --select stg_production__product_subcategory
+
+# dbt test --select "test_name:relationships"
