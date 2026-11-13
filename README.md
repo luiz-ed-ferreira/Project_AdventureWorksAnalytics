@@ -193,6 +193,13 @@ The diagram is provided in editable Draw.io format.
 
 > See the [Staging Layer Documentation](docs/data_model/staging_layer.md) for the complete model inventory, transformation conventions, validation results, and data quality decisions.
 
+#### Intermediate Layer
+
+- The Intermediate layer integrates and enriches standardized data from the Staging layer, applying reusable business logic and preparing datasets for dimensional modeling.
+- The first model, `int_sales__order_details`, combines sales order headers and details at the sales order detail grain, providing validated financial measures and business attributes.
+
+> See the [Intermediate Layer Documentation](docs/data_model/intermediate_layer.md) for the model inventory, transformation logic, validation results, and financial reconciliation.
+
 ### Project Architecture
 
 ```text
