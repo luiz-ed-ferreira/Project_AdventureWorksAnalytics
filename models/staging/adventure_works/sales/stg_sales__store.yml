@@ -1,0 +1,41 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_sales__store
+    description: >
+      Cleaned staging model for Adventure Works stores.
+      Standardizes store identifiers, names, salesperson references,
+      and modification timestamps.
+
+    columns:
+      - name: store_id
+        description: Unique identifier of the store and primary key.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: store_name
+        description: Name of the store.
+        data_tests:
+          - not_null
+
+      - name: salesperson_id
+        description: Identifier of the salesperson responsible for the store.
+
+      - name: modified_at
+        description: Timestamp when the source record was last modified.
+
+
+# View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT store_id) AS distinct_stores,
+#     COUNT_IF(store_id IS NULL) AS null_store_ids,
+#     COUNT_IF(store_name IS NULL) AS null_store_names,
+#     COUNT_IF(salesperson_id IS NULL) AS null_salesperson_ids
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_sales__store`;
+
+# dbt test --select stg_sales__store

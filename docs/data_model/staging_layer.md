@@ -19,7 +19,7 @@ The transformations focus on:
 
 ## Model Inventory
 
-The staging layer contains 14 models organized into three business domains.
+The staging layer contains 15 models organized into three business domains.
 
 ### Sales
 
@@ -32,6 +32,7 @@ The staging layer contains 14 models organized into three business domains.
 | `stg_sales__customer` | Customer identifiers and person/store associations. |
 | `stg_sales__credit_card` | Credit card reference data containing identifiers and card types. |
 | `stg_sales__sales_person` | Salesperson identifiers, territory, quotas, bonuses, and sales performance attributes. |
+| `stg_sales__store` | Store identifiers, names, and associated salesperson references. |
 
 ### Person
 
@@ -93,6 +94,8 @@ The following relationships are tested:
 
 All five registered relationship tests passed.
 
+The new `stg_sales__store` model was also validated through model-specific dbt tests and data integrity checks. Its 701 records have unique, non-null store identifiers and non-null store names and salesperson references.
+
 ## Important Modeling and Data Quality Decisions
 
 ### Customer Representation
@@ -100,6 +103,8 @@ All five registered relationship tests passed.
 Customer records may be associated with an individual, a store, or both.
 
 The staging model preserves `person_id` and `store_id` independently instead of collapsing these relationships.
+
+The `stg_sales__store` model provides the store attributes required for downstream customer integration.
 
 ### Credit Card Data Minimization
 
@@ -111,7 +116,9 @@ Card numbers and expiration attributes are intentionally excluded because they a
 
 One source country record, Namibia, has a NULL `countryregioncode`.
 
-> Proposed treatment -> Replace NULL value with 'NA' (Expected ISO 3166-1 alpha-2).
+The staging model applies a specific correction, assigning `NA` to Namibia's `country_region_code`. This corresponds to Namibia's ISO 3166-1 alpha-2 country code.
+
+The correction is applied in the staging transformation without modifying the source data.
 
 ### Product Discontinuation Date
 
@@ -137,12 +144,12 @@ Missing salesperson, purchase order, credit card, currency rate, and other optio
 
 ## Layer Completion
 
-The staging layer contains 14 dbt models:
+The staging layer contains 15 dbt models:
 
-- 7 Sales models.
+- 8 Sales models.
 - 4 Person models.
 - 3 Production models.
 
-All models were successfully materialized as Databricks views. 
-Model-specific data tests and the five relationship tests were executed successfully. 
+All models were successfully materialized as Databricks views. Model-specific data tests and the five registered relationship tests were executed successfully.
+
 The staging layer is now ready to support the next transformation layer: Intermediate.
