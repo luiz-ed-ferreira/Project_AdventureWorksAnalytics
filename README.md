@@ -188,14 +188,14 @@ The diagram is provided in editable Draw.io format.
 
 #### Staging Layer
 
-- The staging layer contains 15 standardized dbt models across Sales, Person, and Production domains.
+- The staging layer contains 16 standardized dbt models across Sales, Person, and Production domains.
 - All models are materialized as Databricks views and include documented columns, standardized data types, and data quality tests.
 
 > See the [Staging Layer Documentation](docs/data_model/staging_layer.md) for the complete model inventory, transformation conventions, validation results, and data quality decisions.
 
 #### Intermediate Layer
 
-- The Intermediate layer integrates and enriches standardized data from the Staging layer, applying reusable business logic and preparing datasets for dimensional modeling.
+- The Intermediate layer contains 8 models, and integrates and enriches standardized data from the Staging layer, applying reusable business logic and preparing datasets for dimensional modeling.
 - The first model, `int_sales__order_details`, combines sales order headers and details at the sales order detail grain, providing validated financial measures and business attributes.
 
 > See the [Intermediate Layer Documentation](docs/data_model/intermediate_layer.md) for the model inventory, transformation logic, validation results, and financial reconciliation.
@@ -209,6 +209,9 @@ Project_AdventureWorksAnalytics/
 │   ├── architecture/
 │   │   └── AdventureWorksERD.jpeg
 │   ├── data_model/
+│   │   ├── staging_layer.md
+│   │   ├── intermediate_layer.md
+│   │   ├── marts_layer.md
 │   │   ├── dimensional_model.drawio
 │   │   ├── dimensional_model.png
 │   │   └── dimensional_model.md
@@ -222,18 +225,25 @@ Project_AdventureWorksAnalytics/
 │       ├── 03_relationship_analysis.sql
 │       └── 04_supporting_tables_inventory.sql
 │
-├── ingestion/
-│   └── postgres/
-│
 ├── models/
 │   ├── intermediate/
-│   │   ├── sales/
-│   │   │   ├── int_sales__order_details.sql
-│   │   │   ├── int_sales__order_details.yml
-│   │   │   ├── int_sales__order_reasons.sql
-│   │   │   └── int_sales__order_reasons.yml   
-│   │   ├── person/
-│   │   └── production/
+│   │   └── sales/
+│   │       ├── int_sales__order_details.sql
+│   │       ├── int_sales__order_details.yml
+│   │       ├── int_sales__order_reasons.sql
+│   │       ├── int_sales__order_reasons.yml   
+│   │       ├── int_sales__customer.sql
+│   │       ├── int_sales__customer.yml
+│   │       ├── int_sales__product.sql
+│   │       ├── int_sales__product.yml
+│   │       ├── int_sales__geography.sql
+│   │       ├── int_sales__geography.yml
+│   │       ├── int_sales__salesperson.sql
+│   │       ├── int_sales__salesperson.yml
+│   │       ├── int_sales__credit_card.sql
+│   │       ├── int_sales__credit_card.yml
+│   │       ├── int_sales__order_header_metrics.sql
+│   │       └── int_sales__order_header_metrics.yml
 │   ├── marts/
 │   │   ├── core/
 │   │   └── reporting/
@@ -253,11 +263,15 @@ Project_AdventureWorksAnalytics/
 │           │   ├── stg_sales__customer.yml
 │           │   ├── stg_sales__credit_card.sql
 │           │   ├── stg_sales__credit_card.yml
+│           │   ├── stg_sales__store.sql
+│           │   ├── stg_sales__store.yml
 │           │   ├── stg_sales__sales_person.sql
 │           │   └── stg_sales__sales_person.yml
 │           ├── person/
 │           │   ├── stg_person__person.sql
 │           │   ├── stg_person__person.yml
+│           │   ├── stg_person__employee.sql
+│           │   ├── stg_person__employee.yml
 │           │   ├── stg_person__address.sql
 │           │   ├── stg_person__address.yml
 │           │   ├── stg_person__state_province.sql
