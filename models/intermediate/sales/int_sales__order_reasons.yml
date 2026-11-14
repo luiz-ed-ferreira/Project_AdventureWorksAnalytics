@@ -1,0 +1,72 @@
+#view documentation:
+
+version: 2
+
+models:
+  - name: int_sales__order_reasons
+    description: >
+      Integrates sales orders with their associated sales reasons.
+      Preserves the many-to-many relationship between orders and reasons.
+      Grain: one row per sales order and sales reason association.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - sales_order_id
+              - sales_reason_id
+
+    columns:
+      - name: sales_order_id
+        description: Foreign key identifying the sales order.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sales__sales_order_header')
+                field: sales_order_id
+
+      - name: sales_reason_id
+        description: Foreign key identifying the sales reason.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sales__sales_reason')
+                field: sales_reason_id
+
+      - name: sales_reason_name
+        description: Descriptive name of the sales reason.
+        data_tests:
+          - not_null
+
+      - name: sales_reason_type
+        description: Classification of the sales reason.
+        data_tests:
+          - not_null
+
+      - name: association_modified_at
+        description: Last modification timestamp of the order-reason association.
+
+      - name: reason_modified_at
+        description: Last modification timestamp of the sales reason.
+
+# View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT sales_order_id) AS distinct_orders,
+#     COUNT(DISTINCT sales_reason_id) AS distinct_reasons,
+#     COUNT(
+#         DISTINCT STRUCT(sales_order_id, sales_reason_id)
+#     ) AS distinct_order_reason_pairs,
+#     COUNT(*) -
+#         COUNT(DISTINCT STRUCT(sales_order_id, sales_reason_id))
+#         AS duplicate_pairs,
+#     COUNT_IF(sales_order_id IS NULL) AS null_order_ids,
+#     COUNT_IF(sales_reason_id IS NULL) AS null_reason_ids
+# FROM `fea_academy`.`adventure_works_analytics`.`int_sales__order_reasons`;
+
+## dbt test --select int_sales__order_reasons
+
+## dbt test --select "test_name:relationships"
