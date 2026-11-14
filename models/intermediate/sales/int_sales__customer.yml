@@ -1,0 +1,91 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: int_sales__customer
+    description: >
+      Integrates customer, person, and store attributes into a single
+      customer-level model. Preserves individual customers, store
+      customers, and customers associated with both entities.
+      The model grain is one row per customer_id.
+
+    columns:
+      - name: customer_id
+        description: Unique identifier of the customer.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: person_id
+        description: Identifier of the associated individual.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_person__person')
+                field: person_id
+
+      - name: store_id
+        description: Identifier of the associated store.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_sales__store')
+                field: store_id
+
+      - name: territory_id
+        description: Identifier of the customer's sales territory.
+
+      - name: person_type
+        description: Type classification of the associated person.
+
+      - name: person_name_style
+        description: Indicates the name formatting style.
+
+      - name: person_title
+        description: Title of the associated individual.
+
+      - name: first_name
+        description: First name of the associated individual.
+
+      - name: middle_name
+        description: Middle name of the associated individual.
+
+      - name: last_name
+        description: Last name of the associated individual.
+
+      - name: person_suffix
+        description: Name suffix of the associated individual.
+
+      - name: store_name
+        description: Name of the associated store.
+
+      - name: salesperson_id
+        description: Identifier of the salesperson associated with the store.
+
+      - name: customer_modified_at
+        description: Last modification timestamp of the customer record.
+
+      - name: person_modified_at
+        description: Last modification timestamp of the person record.
+
+      - name: store_modified_at
+        description: Last modification timestamp of the store record.
+
+#View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT customer_id) AS distinct_customers,
+#     COUNT_IF(customer_id IS NULL) AS null_customer_ids,
+#     COUNT_IF(person_id IS NOT NULL) AS customers_with_person,
+#     COUNT_IF(store_id IS NOT NULL) AS customers_with_store,
+#     COUNT_IF(person_id IS NOT NULL AND store_id IS NOT NULL) AS customers_with_both,
+#     COUNT_IF(person_id IS NULL AND store_id IS NULL) AS customers_without_person_or_store,
+#     COUNT_IF(person_id IS NOT NULL AND person_type IS NULL) AS person_join_failures,
+#     COUNT_IF(store_id IS NOT NULL AND store_name IS NULL) AS store_join_failures
+# FROM `fea_academy`.`adventure_works_analytics`.`int_sales__customer`;
+
+## dbt test --select int_sales__customer
+
+## dbt test --select "test_name:relationships"

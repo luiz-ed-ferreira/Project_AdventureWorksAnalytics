@@ -1,0 +1,130 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: int_sales__product
+    description: >
+      Integrates product attributes with their associated subcategory
+      and category information. Combines product, subcategory, and
+      category data into a unified product-level model.
+      Grain: one row per product_id.
+
+    columns:
+      - name: product_id
+        description: Unique identifier of the product.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: product_name
+        description: Name of the product.
+        data_tests:
+          - not_null
+
+      - name: product_number
+        description: Unique product identification number.
+
+      - name: is_manufactured_in_house
+        description: Indicates whether the product is manufactured in-house.
+
+      - name: is_finished_good
+        description: Indicates whether the product is a finished good.
+
+      - name: color
+        description: Product color.
+
+      - name: safety_stock_level
+        description: Minimum inventory quantity recommended for safety stock.
+
+      - name: reorder_point
+        description: Inventory level that triggers a replenishment order.
+
+      - name: standard_cost
+        description: Standard manufacturing or acquisition cost of the product.
+
+      - name: list_price
+        description: Standard selling price of the product.
+
+      - name: size
+        description: Product size.
+
+      - name: size_unit_measure_code
+        description: Unit of measure code associated with product size.
+
+      - name: weight_unit_measure_code
+        description: Unit of measure code associated with product weight.
+
+      - name: weight
+        description: Product weight.
+
+      - name: days_to_manufacture
+        description: Number of days required to manufacture the product.
+
+      - name: product_line
+        description: Product line classification.
+
+      - name: product_class
+        description: Product class classification.
+
+      - name: product_style
+        description: Product style classification.
+
+      - name: product_model_id
+        description: Identifier of the associated product model.
+
+      - name: product_subcategory_id
+        description: Identifier of the associated product subcategory.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_production__product_subcategory')
+                field: product_subcategory_id
+
+      - name: product_subcategory_name
+        description: Name of the associated product subcategory.
+
+      - name: product_category_id
+        description: Identifier of the associated product category.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_production__product_category')
+                field: product_category_id
+
+      - name: product_category_name
+        description: Name of the associated product category.
+
+      - name: sell_start_date
+        description: Date when the product became available for sale.
+
+      - name: sell_end_date
+        description: Date when the product stopped being available for sale.
+
+      - name: discontinued_date
+        description: Date when the product was discontinued.
+
+      - name: product_modified_at
+        description: Last modification timestamp of the product record.
+
+      - name: subcategory_modified_at
+        description: Last modification timestamp of the subcategory record.
+
+      - name: category_modified_at
+        description: Last modification timestamp of the category record.
+
+#View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT product_id) AS distinct_products,
+#     COUNT_IF(product_id IS NULL) AS null_product_ids,
+#     COUNT_IF(product_subcategory_id IS NOT NULL) AS products_with_subcategory,
+#     COUNT_IF(product_category_id IS NOT NULL) AS products_with_category,
+#     COUNT_IF(product_subcategory_id IS NOT NULL AND product_subcategory_name IS NULL) AS subcategory_join_failures,
+#     COUNT_IF(product_category_id IS NOT NULL AND product_category_name IS NULL) AS category_join_failures
+# FROM `fea_academy`.`adventure_works_analytics`.`int_sales__product`;
+
+## dbt test --select int_sales__product
+
+## dbt test --select "test_name:relationships"

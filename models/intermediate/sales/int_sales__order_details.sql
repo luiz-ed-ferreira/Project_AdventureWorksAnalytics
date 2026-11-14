@@ -1,4 +1,3 @@
-
 -- Integrate sales order details with sales order header attributes
 -- Grain: one row per sales order detail
 
