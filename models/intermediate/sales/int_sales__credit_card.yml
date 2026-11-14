@@ -1,0 +1,28 @@
+# View documentation:
+
+version: 2
+
+models:
+  - name: int_sales__credit_card
+    description: >
+      Integrates credit card records for dimensional modeling.
+      Sensitive card information, such as card numbers and expiration dates,
+      is intentionally excluded.
+    columns:
+      - name: credit_card_id
+        description: Unique identifier of the credit card.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: card_type
+        description: Credit card type or brand.
+        data_tests:
+          - not_null
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# dbt test --select int_sales__credit_card

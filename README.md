@@ -72,7 +72,7 @@ In progress [Under Review]
              (Analytics and Reporting)
 ```
 
-### Data Ingestion (EL)
+### Data Ingestion (EL) - Bronze layer
 
 > The data ingestion process from PostgreSQL to Databricks has been successfully completed, following the [Indicium AI – Databricks Data Sources](https://bitbucket.org/indiciumtech/databricks-datasources/src/main/) implementation guide.
 
@@ -186,19 +186,23 @@ The diagram is provided in editable Draw.io format.
 - **Intermediate**: Business logic implementation, data integration, and preparation of datasets for dimensional modeling.
 - **Marts**: Business-ready fact and dimension tables designed to support analytical queries, reporting, and BI dashboards.
 
-#### Staging Layer
+#### Staging Layer - Silver layer #1
 
-- The staging layer contains 16 standardized dbt models across Sales, Person, and Production domains.
-- All models are materialized as Databricks views and include documented columns, standardized data types, and data quality tests.
+- The staging layer contains 16 standardized dbt models across Sales, Person, and Production domains. All models are materialized as Databricks views and include documented columns, standardized data types, and data quality tests.
 
 > See the [Staging Layer Documentation](docs/data_model/staging_layer.md) for the complete model inventory, transformation conventions, validation results, and data quality decisions.
 
-#### Intermediate Layer
+#### Intermediate Layer - Silver layer #2
 
-- The Intermediate layer contains 8 models, and integrates and enriches standardized data from the Staging layer, applying reusable business logic and preparing datasets for dimensional modeling.
-- The first model, `int_sales__order_details`, combines sales order headers and details at the sales order detail grain, providing validated financial measures and business attributes.
+- The Intermediate layer contains 8 models that integrate and enrich standardized data from the Staging layer, applying reusable business logic and preparing datasets for dimensional modeling.
 
 > See the [Intermediate Layer Documentation](docs/data_model/intermediate_layer.md) for the model inventory, transformation logic, validation results, and financial reconciliation.
+
+#### Marts Layer - Gold layer
+
+- TBD
+
+> See the [Marts Layer Documentation](docs/data_model/marts_layer.md) for the model inventory, transformation logic, validation results, and financial reconciliation.
 
 ### Project Architecture
 

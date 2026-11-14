@@ -1,0 +1,92 @@
+# View documentation:
+
+version: 2
+
+models:
+  - name: int_sales__order_header_metrics
+    description: >
+      Provides order-level financial metrics and dimensional keys
+      from sales order headers.
+      Grain: one row per sales order.
+      Financial values are preserved at header level to prevent
+      duplication when joining with order detail records.
+
+    columns:
+      - name: sales_order_id
+        description: Unique identifier of the sales order.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: order_date
+        description: Date when the sales order was placed.
+        data_tests:
+          - not_null
+
+      - name: customer_id
+        description: Customer associated with the sales order.
+        data_tests:
+          - not_null
+
+      - name: salesperson_id
+        description: Salesperson responsible for the order, when applicable.
+
+      - name: territory_id
+        description: Sales territory associated with the order, when applicable.
+
+      - name: bill_to_address_id
+        description: Billing address identifier.
+
+      - name: ship_to_address_id
+        description: Shipping address identifier.
+
+      - name: credit_card_id
+        description: Credit card identifier, when applicable.
+
+      - name: status
+        description: Source sales order status code.
+
+      - name: is_online_order
+        description: Indicates whether the order was placed online.
+
+      - name: subtotal_amount
+        description: Order subtotal before tax and freight, after line discounts.
+
+      - name: tax_amount
+        description: Total tax charged for the order.
+
+      - name: freight_amount
+        description: Shipping and handling charge for the order.
+
+      - name: total_due_amount
+        description: Total amount due, including subtotal, tax, and freight.
+
+      - name: modified_at
+        description: Timestamp of the last source record modification.
+
+# View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT sales_order_id) AS distinct_orders,
+#     COUNT_IF(sales_order_id IS NULL) AS null_order_ids,
+#     COUNT_IF(customer_id IS NULL) AS null_customer_ids,
+#     COUNT_IF(order_date IS NULL) AS null_order_dates,
+#     ROUND(SUM(subtotal_amount), 2) AS total_subtotal,
+#     ROUND(SUM(tax_amount), 2) AS total_tax,
+#     ROUND(SUM(freight_amount), 2) AS total_freight,
+#     ROUND(SUM(total_due_amount), 2) AS total_due
+# FROM `fea_academy`.adventure_works_analytics.int_sales__order_header_metrics;
+
+# SELECT
+#     COUNT(*) AS source_records,
+#     COUNT(i.sales_order_id) AS intermediate_matches,
+#     SUM(ABS(s.subtotal - i.subtotal_amount)) AS subtotal_difference,
+#     SUM(ABS(s.tax_amount - i.tax_amount)) AS tax_difference,
+#     SUM(ABS(s.freight - i.freight_amount)) AS freight_difference,
+#     SUM(ABS(s.total_due - i.total_due_amount)) AS total_due_difference
+# FROM `fea_academy`.adventure_works_analytics.stg_sales__sales_order_header s
+# LEFT JOIN `fea_academy`.adventure_works_analytics.int_sales__order_header_metrics i
+#     ON s.sales_order_id = i.sales_order_id;
+
+# dbt test --select int_sales__order_header_metrics

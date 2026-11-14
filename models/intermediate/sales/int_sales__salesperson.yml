@@ -1,0 +1,92 @@
+# View documentation:
+
+version: 2
+
+models:
+  - name: int_sales__salesperson
+    description: >
+      Integrates salesperson records with their associated employee
+      and person attributes, including sales performance indicators.
+      The model preserves one row per salesperson.
+    columns:
+      - name: sales_person_id
+        description: Unique identifier of the salesperson.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: territory_id
+        description: Identifier of the associated sales territory.
+
+      - name: job_title
+        description: Employee job title.
+
+      - name: hire_date
+        description: Employee hiring date.
+
+      - name: current_flag
+        description: Indicates whether the employee is currently active.
+
+      - name: person_type
+        description: Person classification from the source.
+
+      - name: name_style
+        description: Indicates whether the person's name follows the alternate name style.
+
+      - name: person_title
+        description: Personal title, when available.
+
+      - name: first_name
+        description: Person's first name.
+        data_tests:
+          - not_null
+
+      - name: middle_name
+        description: Person's middle name, when available.
+
+      - name: last_name
+        description: Person's last name.
+        data_tests:
+          - not_null
+
+      - name: suffix
+        description: Name suffix, when available.
+
+      - name: sales_quota
+        description: Sales quota assigned to the salesperson.
+
+      - name: bonus
+        description: Sales bonus amount.
+
+      - name: commission_pct
+        description: Sales commission percentage.
+
+      - name: sales_ytd
+        description: Year-to-date sales amount.
+
+      - name: sales_last_year
+        description: Sales amount from the previous year.
+
+      - name: salesperson_modified_at
+        description: Timestamp when the salesperson record was last modified.
+
+      - name: employee_modified_at
+        description: Timestamp when the employee record was last modified.
+
+      - name: person_modified_at
+        description: Timestamp when the person record was last modified.
+
+# View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT sales_person_id) AS distinct_salespeople,
+#     COUNT_IF(sales_person_id IS NULL) AS null_salesperson_ids,
+#     COUNT_IF(job_title IS NOT NULL) AS employees_with_job_title,
+#     COUNT_IF(first_name IS NOT NULL) AS salespeople_with_first_name,
+#     COUNT_IF(last_name IS NOT NULL) AS salespeople_with_last_name,
+#     COUNT_IF(job_title = 'Sales Representative') AS sales_representatives,
+#     COUNT_IF(current_flag = TRUE) AS active_salespeople
+# FROM `fea_academy`.`adventure_works_analytics`.`int_sales__salesperson`;
+
+# dbt test --select int_sales__salesperson
