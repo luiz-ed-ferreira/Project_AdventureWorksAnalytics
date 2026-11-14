@@ -111,7 +111,7 @@ Card numbers and expiration attributes are intentionally excluded because they a
 
 One source country record, Namibia, has a NULL `countryregioncode`.
 
-The NULL value is preserved in staging rather than replaced with an assumed country code.
+> Proposed treatment -> Replace NULL value with 'NA' (Expected ISO 3166-1 alpha-2).
 
 ### Product Discontinuation Date
 
