@@ -1,0 +1,40 @@
+#View documentation:
+
+version: 2
+
+models:
+  - name: stg_person__employee
+    description: >
+      Standardizes employee records with relevant job and employment
+      attributes for sales analysis.
+    columns:
+      - name: business_entity_id
+        description: Unique identifier of the employee.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: job_title
+        description: Employee job title.
+
+      - name: hire_date
+        description: Employee hiring date.
+
+      - name: current_flag
+        description: Indicates whether the employee is currently active.
+
+      - name: modified_at
+        description: Timestamp when the source employee record was last modified.
+
+#View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT business_entity_id) AS distinct_employees,
+#     COUNT_IF(business_entity_id IS NULL) AS null_employee_ids,
+#     COUNT_IF(job_title IS NULL) AS null_job_titles,
+#     COUNT_IF(current_flag = TRUE) AS active_employees,
+#     COUNT_IF(job_title = 'Sales Representative') AS sales_representatives
+# FROM `fea_academy`.`adventure_works_analytics`.`stg_person__employee`;
+
+# dbt test --select stg_person__employee

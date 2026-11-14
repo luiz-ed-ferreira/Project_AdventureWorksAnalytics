@@ -188,7 +188,7 @@ The diagram is provided in editable Draw.io format.
 
 #### Staging Layer
 
-- The staging layer contains 15 standardized dbt models across Sales, Person, and Production domains.
+- The staging layer contains 16 standardized dbt models across Sales, Person, and Production domains.
 - All models are materialized as Databricks views and include documented columns, standardized data types, and data quality tests.
 
 > See the [Staging Layer Documentation](docs/data_model/staging_layer.md) for the complete model inventory, transformation conventions, validation results, and data quality decisions.

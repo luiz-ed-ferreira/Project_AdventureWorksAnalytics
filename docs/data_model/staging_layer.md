@@ -19,7 +19,7 @@ The transformations focus on:
 
 ## Model Inventory
 
-The staging layer contains 15 models organized into three business domains.
+The staging layer contains 16 models organized into three business domains.
 
 ### Sales
 
@@ -39,6 +39,7 @@ The staging layer contains 15 models organized into three business domains.
 | Model | Description |
 |---|---|
 | `stg_person__person` | Individual and employee identification attributes. |
+| `stg_person__employee` | Employee identifiers, job titles, hiring dates, and employment status indicators. |
 | `stg_person__address` | Address, city, state reference, and postal code. |
 | `stg_person__state_province` | State and province information and country associations. |
 | `stg_person__country_region` | Country and region reference data. |
@@ -94,7 +95,9 @@ The following relationships are tested:
 
 All five registered relationship tests passed.
 
-The new `stg_sales__store` model was also validated through model-specific dbt tests and data integrity checks. Its 701 records have unique, non-null store identifiers and non-null store names and salesperson references.
+The `stg_sales__store` model was also validated through model-specific dbt tests and data integrity checks. Its 701 records have unique, non-null store identifiers and non-null store names and salesperson references.
+
+The `stg_person__employee` model was validated through model-specific dbt tests. Its 290 records have unique, non-null employee identifiers and non-null job titles.
 
 ## Important Modeling and Data Quality Decisions
 
@@ -105,6 +108,14 @@ Customer records may be associated with an individual, a store, or both.
 The staging model preserves `person_id` and `store_id` independently instead of collapsing these relationships.
 
 The `stg_sales__store` model provides the store attributes required for downstream customer integration.
+
+### Employee and Salesperson Representation
+
+Employee and salesperson information is maintained in separate staging models.
+
+The `stg_person__employee` model provides employment attributes from `humanresources_employee`, while `stg_sales__sales_person` contains sales-specific information.
+
+Both entities share the `business_entity_id` identifier, which supports their integration with person records in downstream transformations.
 
 ### Credit Card Data Minimization
 
@@ -144,12 +155,12 @@ Missing salesperson, purchase order, credit card, currency rate, and other optio
 
 ## Layer Completion
 
-The staging layer contains 15 dbt models:
+The staging layer contains 16 dbt models:
 
 - 8 Sales models.
-- 4 Person models.
+- 5 Person models.
 - 3 Production models.
 
-All models were successfully materialized as Databricks views. Model-specific data tests and the five registered relationship tests were executed successfully.
+All 16 models were successfully materialized as Databricks views. Model-specific data tests and the five registered relationship tests were executed successfully.
 
 The staging layer is now ready to support the next transformation layer: Intermediate.
