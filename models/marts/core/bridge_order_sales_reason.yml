@@ -1,0 +1,42 @@
+# Table documentation:
+
+version: 2
+
+models:
+  - name: bridge_order_sales_reason
+    description: "Bridge table connecting sales orders to their associated sales reasons. Grain: one row per sales order and sales reason combination."
+
+    columns:
+      - name: sales_order_id
+        description: "Sales order identifier."
+        data_tests:
+          - not_null
+
+      - name: sales_reason_id
+        description: "Sales reason identifier."
+        data_tests:
+          - not_null
+
+      - name: sales_reason_key
+        description: "Foreign key referencing the sales reason dimension."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_sales_reason')
+                field: sales_reason_key
+
+# Table validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT sales_order_id) AS distinct_orders,
+#     COUNT(DISTINCT sales_reason_id) AS distinct_reasons,
+#     COUNT(DISTINCT CONCAT(
+#         CAST(sales_order_id AS STRING), '-',
+#         CAST(sales_reason_id AS STRING)
+#     )) AS distinct_order_reason_pairs,
+#     SUM(CASE WHEN sales_reason_key IS NULL THEN 1 ELSE 0 END) AS null_sales_reason_keys
+# FROM fea_academy.adventure_works_analytics.bridge_order_sales_reason;
+
+# dbt test --select bridge_order_sales_reason

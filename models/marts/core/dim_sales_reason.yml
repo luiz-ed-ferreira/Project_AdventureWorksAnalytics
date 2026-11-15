@@ -1,0 +1,41 @@
+# Table documentation:
+
+version: 2
+
+models:
+  - name: dim_sales_reason
+    description: "Sales reason dimension containing reason names and classifications."
+
+    columns:
+      - name: sales_reason_key
+        description: "Surrogate key identifying each sales reason."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: sales_reason_id
+        description: "Original sales reason business key."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: sales_reason_name
+        data_tests:
+          - not_null
+
+      - name: sales_reason_type
+        data_tests:
+          - not_null
+
+# Table validation:
+
+#  SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT sales_reason_key) AS distinct_sales_reason_keys,
+#     COUNT(DISTINCT sales_reason_id) AS distinct_sales_reasons,
+#     COUNT(DISTINCT sales_reason_type) AS distinct_reason_types,
+#     COUNT(sales_reason_name) AS reasons_with_name,
+#     SUM(CASE WHEN sales_reason_key IS NULL THEN 1 ELSE 0 END) AS null_sales_reason_keys
+# FROM fea_academy.adventure_works_analytics.dim_sales_reason;
+
+# dbt test --select dim_sales_reason
