@@ -314,11 +314,13 @@ Project_AdventureWorksAnalytics/
 │               ├── stg_production__product_category.sql
 │               └── stg_production__product_category.yml
 │
+├── tests/
+│   └── assert_bridge_order_sales_reason_unique.sql
+│
 ├── analyses/
 ├── macros/
 ├── seeds/
 ├── snapshots/
-├── tests/
 │
 ├── dbt_project.yml
 ├── package-lock.yml
