@@ -19,7 +19,7 @@ The transformations focus on:
 
 ## Model Inventory
 
-The staging layer contains 16 models organized into three business domains.
+The Staging layer contains 17 models responsible for standardizing source data, renaming columns, converting data types, and applying initial data quality adjustments.
 
 ### Sales
 
@@ -33,6 +33,7 @@ The staging layer contains 16 models organized into three business domains.
 | `stg_sales__credit_card` | Credit card reference data containing identifiers and card types. |
 | `stg_sales__sales_person` | Salesperson identifiers, territory, quotas, bonuses, and sales performance attributes. |
 | `stg_sales__store` | Store identifiers, names, and associated salesperson references. |
+| `stg_sales__sales_territory`| Standardizes sales territory attributes, including territory name, country, group, sales and cost metrics. |
 
 ### Person
 
@@ -157,10 +158,10 @@ Missing salesperson, purchase order, credit card, currency rate, and other optio
 
 The staging layer contains 16 dbt models:
 
-- 8 Sales models.
+- 9 Sales models.
 - 5 Person models.
 - 3 Production models.
 
-All 16 models were successfully materialized as Databricks views. Model-specific data tests and the five registered relationship tests were executed successfully.
+All 17 models were successfully materialized as Databricks views. Model-specific data tests and the five registered relationship tests were executed successfully.
 
 The staging layer is now ready to support the next transformation layer: Intermediate.
