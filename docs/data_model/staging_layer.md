@@ -33,7 +33,7 @@ The Staging layer contains 17 models responsible for standardizing source data, 
 | `stg_sales__credit_card` | Credit card reference data containing identifiers and card types. |
 | `stg_sales__sales_person` | Salesperson identifiers, territory, quotas, bonuses, and sales performance attributes. |
 | `stg_sales__store` | Store identifiers, names, and associated salesperson references. |
-| `stg_sales__sales_territory`| Standardizes sales territory attributes, including territory name, country, group, sales and cost metrics. |
+| `stg_sales__sales_territory` | Standardizes sales territory attributes, including territory name, country, group, sales and cost metrics. |
 
 ### Person
 

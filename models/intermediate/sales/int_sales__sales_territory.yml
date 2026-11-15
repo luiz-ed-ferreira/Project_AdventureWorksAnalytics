@@ -1,0 +1,39 @@
+# View documentation:
+
+version: 2
+
+models:
+  - name: int_sales__sales_territory
+    description: "Integrated sales territory attributes for dimensional modeling."
+
+    columns:
+      - name: territory_id
+        description: "Original sales territory business key."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: territory_name
+        data_tests:
+          - not_null
+
+      - name: country_region_code
+        data_tests:
+          - not_null
+
+      - name: territory_group
+        data_tests:
+          - not_null
+
+# View validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT territory_id) AS distinct_territories,
+#     COUNT(territory_name) AS territories_with_name,
+#     COUNT(country_region_code) AS territories_with_country,
+#     COUNT(DISTINCT territory_group) AS distinct_territory_groups,
+#     SUM(CASE WHEN territory_id IS NULL THEN 1 ELSE 0 END) AS null_territory_ids
+# FROM fea_academy.adventure_works_analytics.int_sales__sales_territory;
+
+# dbt test --select int_sales__sales_territory

@@ -27,6 +27,7 @@ Intermediate models are materialized as views.
 | `int_sales__salesperson` | Integrates salesperson, employee, and person attributes. | One row per salesperson. |
 | `int_sales__credit_card` | Prepares credit card attributes for dimensional modeling. | One row per credit card. |
 | `int_sales__order_header_metrics` | Provides order-level financial measures and dimensional keys. | One row per sales order. |
+| `int_sales__sales_territory` | Integrates sales territory attributes, including territory name, country, group, and financial performance metrics. |
 
 ## Model: int_sales__order_details
 
@@ -577,9 +578,76 @@ The validated order-level totals are:
 
 All four financial measures reconcile exactly with the corresponding Staging records at the source precision.
 
+## Model: int_sales__sales_territory
+
+### Purpose
+
+Provides integrated sales territory attributes and financial performance metrics for dimensional modeling and business analysis.
+
+The model consolidates territory information standardized in the Staging layer, preserving the original territory identifiers and descriptive attributes.
+
+### Source Models
+
+- `stg_sales__sales_territory`
+
+### Grain
+
+One row per sales territory.
+
+`sales_territory_id` is not the column name in this model; `territory_id` uniquely identifies each territory.
+
+### Key Attributes
+
+The model includes:
+
+- Sales territory identifier and name.
+- Country or region code.
+- Territory group.
+- Year-to-date and previous-year sales amounts.
+- Year-to-date and previous-year cost amounts.
+- Source row GUID.
+- Source modification timestamp.
+
+### Financial Measures
+
+The model preserves four financial measures:
+
+- `sales_ytd`: Sales accumulated during the current year.
+- `sales_last_year`: Sales recorded during the previous year.
+- `cost_ytd`: Costs accumulated during the current year.
+- `cost_last_year`: Costs recorded during the previous year.
+
+Financial fields are maintained as `DECIMAL(19,4)`.
+
+### Modeling Decisions
+
+#### Preservation of Source Metrics
+
+The model retains the financial performance metrics provided by the source system without recalculating or aggregating them.
+
+This preserves the original territory-level information and supports comparisons between current-year and previous-year sales and costs.
+
+#### Separation from Geography
+
+Sales territories represent the company's commercial organization, whereas geography represents the physical location of addresses.
+
+These concepts remain separate in the dimensional model, allowing independent analysis of sales by commercial territory and geographic location.
+
+### Data Quality and Validation
+
+| Validation | Result |
+|---|---:|
+| Total records | 10 |
+| Distinct territories | 10 |
+| Territories with name | 10 |
+| Territories with country code | 10 |
+| Distinct territory groups | 3 |
+| Null territory IDs | 0 |
+| dbt model tests | Passed |
+
 ## Data Quality and Validation
 
-All eight Intermediate models were successfully materialized using dbt.
+All 9 Intermediate models were successfully materialized using dbt.
 
 Model-specific tests were executed for each model, covering applicable:
 
@@ -651,31 +719,14 @@ Referential integrity tests:
 
 `dbt test --select "test_name:relationships"`
 
-All eight Intermediate models were successfully executed, and their model-specific tests passed.
+All 9 Intermediate models were successfully executed, and their model-specific tests passed.
 
 ## Layer Completion
 
 The Intermediate layer is complete.
 
-It contains eight integrated models covering sales transactions, order reasons, customers, products, geography, salespeople, credit cards, and order-level financial metrics.
+It contains 9 integrated models covering sales transactions, order reasons, customers, products, geography, salespeople, credit cards, and order-level financial metrics.
 
 The layer establishes reusable business entities, preserves analytical grain, and separates measures to prevent aggregation errors.
 
 These models provide the foundation for the dimensional structures and analytical fact tables in the Marts layer.
-
-## Next Steps
-
-The next phase is the development of the Marts layer, including:
-
-- Sales fact table.
-- Date dimension.
-- Product dimension.
-- Customer dimension.
-- Geography dimension.
-- Credit card dimension.
-- Salesperson dimension.
-- Sales territory dimension.
-- Sales reason dimension.
-- Sales order-to-sales reason bridge.
-
-The dimensional model will preserve the established grains and relationships while supporting the business questions and financial reconciliation requirements.
