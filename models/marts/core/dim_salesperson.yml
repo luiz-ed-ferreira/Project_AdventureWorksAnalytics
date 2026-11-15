@@ -1,0 +1,43 @@
+# Table documentation:
+
+version: 2
+
+models:
+  - name: dim_salesperson
+    description: "Salesperson dimension combining employee, personal, and sales performance attributes."
+
+    columns:
+      - name: salesperson_key
+        description: "Surrogate key identifying each salesperson."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: sales_person_id
+        description: "Original salesperson business key."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: job_title
+        data_tests:
+          - not_null
+
+      - name: current_flag
+        description: "Indicates whether the salesperson record is currently active."
+        data_tests:
+          - not_null
+
+# Table validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT salesperson_key) AS distinct_salesperson_keys,
+#     COUNT(DISTINCT sales_person_id) AS distinct_salespeople,
+#     COUNT(job_title) AS salespeople_with_job_title,
+#     SUM(CASE WHEN current_flag = TRUE THEN 1 ELSE 0 END) AS active_salespeople,
+#     SUM(CASE WHEN current_flag = FALSE THEN 1 ELSE 0 END) AS inactive_salespeople,
+#     SUM(CASE WHEN salesperson_key IS NULL THEN 1 ELSE 0 END) AS null_salesperson_keys
+# FROM fea_academy.adventure_works_analytics.dim_salesperson;
+
+# dbt test --select dim_salesperson

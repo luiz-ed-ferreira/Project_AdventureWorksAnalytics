@@ -1,0 +1,37 @@
+# Table documentation:
+
+version: 2
+
+models:
+  - name: dim_credit_card
+    description: "Credit card dimension containing card classification attributes."
+
+    columns:
+      - name: credit_card_key
+        description: "Surrogate key identifying each credit card."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: credit_card_id
+        description: "Original credit card business key."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: card_type
+        description: "Credit card classification."
+        data_tests:
+          - not_null
+
+# Table validation: 
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT credit_card_key) AS distinct_credit_card_keys,
+#     COUNT(DISTINCT credit_card_id) AS distinct_credit_cards,
+#     COUNT(DISTINCT card_type) AS distinct_card_types,
+#     SUM(CASE WHEN card_type IS NULL THEN 1 ELSE 0 END) AS null_card_types
+# FROM fea_academy.adventure_works_analytics.dim_credit_card;
+
+# dbt test --select dim_credit_card

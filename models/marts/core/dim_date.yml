@@ -1,0 +1,45 @@
+
+#Table documentation:
+
+version: 2
+
+models:
+  - name: dim_date
+    description: "Calendar dimension covering the sales data reference period."
+
+    columns:
+      - name: date_key
+        description: "Surrogate date key in YYYYMMDD format."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: date_day
+        description: "Calendar date."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: year
+        data_tests:
+          - not_null
+
+      - name: month
+        data_tests:
+          - not_null
+
+      - name: day_of_month
+        data_tests:
+          - not_null
+
+#Table validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT date_key) AS distinct_date_keys,
+#     MIN(date_day) AS min_date,
+#     MAX(date_day) AS max_date,
+#     SUM(CASE WHEN is_weekend THEN 1 ELSE 0 END) AS weekend_days
+# FROM fea_academy.adventure_works_analytics.dim_date;
+
+# dbt test --select dim_date

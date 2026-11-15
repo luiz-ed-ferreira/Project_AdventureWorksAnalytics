@@ -1,0 +1,37 @@
+# table documentation:
+
+version: 2
+
+models:
+  - name: dim_customer
+    description: "Customer dimension combining individual and store attributes."
+
+    columns:
+      - name: customer_key
+        description: "Surrogate key identifying each customer."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: "Original customer business key."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: person_type
+        description: "Customer classification from the person record."
+
+# Table validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT customer_key) AS distinct_customer_keys,
+#     COUNT(DISTINCT customer_id) AS distinct_customers,
+#     COUNT(person_id) AS customers_with_person,
+#     COUNT(store_id) AS customers_with_store,
+#     SUM(CASE WHEN person_id IS NOT NULL AND store_id IS NOT NULL THEN 1 ELSE 0 END) AS customers_with_both,
+#     SUM(CASE WHEN customer_key IS NULL THEN 1 ELSE 0 END) AS null_customer_keys
+# FROM fea_academy.adventure_works_analytics.dim_customer;
+
+# dbt test --select dim_customer

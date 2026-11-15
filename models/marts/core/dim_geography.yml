@@ -1,0 +1,42 @@
+# Table documentation:
+
+version: 2
+
+models:
+  - name: dim_geography
+    description: "Geography dimension combining address, state/province, and country attributes."
+
+    columns:
+      - name: geography_key
+        description: "Surrogate key identifying each address."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: address_id
+        description: "Original address business key."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: city
+        data_tests:
+          - not_null
+
+      - name: country_region_name
+        data_tests:
+          - not_null
+
+# Table validation:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT geography_key) AS distinct_geography_keys,
+#     COUNT(DISTINCT address_id) AS distinct_addresses,
+#     COUNT(DISTINCT country_region_name) AS distinct_countries,
+#     COUNT(DISTINCT state_province_name) AS distinct_states_provinces,
+#     COUNT(city) AS addresses_with_city,
+#     SUM(CASE WHEN geography_key IS NULL THEN 1 ELSE 0 END) AS null_geography_keys
+# FROM fea_academy.adventure_works_analytics.dim_geography;
+
+# dbt test --select dim_geography
