@@ -188,19 +188,19 @@ The diagram is provided in editable Draw.io format.
 
 #### Staging Layer - Silver layer #1
 
-- The staging layer contains 16 standardized dbt models across Sales, Person, and Production domains. All models are materialized as Databricks views and include documented columns, standardized data types, and data quality tests.
+- The staging layer contains 17 standardized dbt models across Sales, Person, and Production domains. All models are materialized as Databricks views and include documented columns, standardized data types, and data quality tests.
 
 > See the [Staging Layer Documentation](docs/data_model/staging_layer.md) for the complete model inventory, transformation conventions, validation results, and data quality decisions.
 
 #### Intermediate Layer - Silver layer #2
 
-- The Intermediate layer contains 8 models that integrate and enrich standardized data from the Staging layer, applying reusable business logic and preparing datasets for dimensional modeling.
+- The Intermediate layer contains 9 models that integrate and enrich standardized data from the Staging layer, applying reusable business logic and preparing datasets for dimensional modeling.
 
 > See the [Intermediate Layer Documentation](docs/data_model/intermediate_layer.md) for the model inventory, transformation logic, validation results, and financial reconciliation.
 
 #### Marts Layer - Gold layer
 
-- TBD
+- The Marts layer contains 10 models, structured around a dimensional model to support business analysis, reporting, and data-driven decision-making.
 
 > See the [Marts Layer Documentation](docs/data_model/marts_layer.md) for the model inventory, transformation logic, validation results, and financial reconciliation.
 
@@ -244,17 +244,41 @@ Project_AdventureWorksAnalytics/
 │   │       ├── int_sales__geography.yml
 │   │       ├── int_sales__salesperson.sql
 │   │       ├── int_sales__salesperson.yml
+│   │       ├── int_sales__sales_territory.sql
+│   │       ├── int_sales__sales_territory.yml
 │   │       ├── int_sales__credit_card.sql
 │   │       ├── int_sales__credit_card.yml
 │   │       ├── int_sales__order_header_metrics.sql
 │   │       └── int_sales__order_header_metrics.yml
 │   ├── marts/
 │   │   ├── core/
+│   │   │   ├── fact_sales.sql
+│   │   │   ├── fact_sales.yml
+│   │   │   ├── dim_date.sql
+│   │   │   ├── dim_date.yml
+│   │   │   ├── dim_product.sql
+│   │   │   ├── dim_product.yml   
+│   │   │   ├── dim_customer.sql
+│   │   │   ├── dim_customer.yml
+│   │   │   ├── dim_geography.sql
+│   │   │   ├── dim_geography.yml
+│   │   │   ├── dim_credit_card.sql
+│   │   │   ├── dim_credit_card.yml
+│   │   │   ├── dim_salesperson.sql
+│   │   │   ├── dim_salesperson.yml
+│   │   │   ├── dim_sales_territory.sql
+│   │   │   ├── dim_sales_territory.yml
+│   │   │   ├── dim_sales_reason.sql
+│   │   │   ├── dim_sales_reason.yml
+│   │   │   ├── bridge_order_sales_reason.sql
+│   │   │   └── bridge_order_sales_reason.yml
 │   │   └── reporting/
 │   └── staging/
 │       └── adventure_works/
 │           ├── _adventure_works__sources.yml
 │           ├── sales/
+│           │   ├── stg_sales__sales_territory.sql
+│           │   ├── stg_sales__sales_territory.yml
 │           │   ├── stg_sales__sales_order_header.sql
 │           │   ├── stg_sales__sales_order_header.yml
 │           │   ├── stg_sales__sales_order_header_sales_reason.sql
