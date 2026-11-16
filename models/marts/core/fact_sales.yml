@@ -1,0 +1,192 @@
+# Table documentation:
+
+
+version: 2
+
+models:
+  - name: fact_sales
+    description: "Sales fact table at order detail level. Each record represents one sales order line."
+
+    columns:
+      - name: sales_order_id
+        description: "Sales order identifier."
+        data_tests:
+          - not_null
+
+      - name: sales_order_detail_id
+        description: "Sales order detail identifier."
+        data_tests:
+          - not_null
+
+      - name: order_date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: due_date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: ship_date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: product_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_key
+
+      - name: customer_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+
+      - name: credit_card_key
+        description: "May be null when the original sales transaction has no associated credit card."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_credit_card')
+                field: credit_card_key
+
+      - name: salesperson_key
+        description: "May be null for online orders without an associated salesperson."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_salesperson')
+                field: salesperson_key
+
+      - name: sales_territory_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_sales_territory')
+                field: sales_territory_key
+
+      - name: bill_to_geography_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_geography')
+                field: geography_key
+
+      - name: ship_to_geography_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_geography')
+                field: geography_key
+
+# Table validation:
+
+##########################################################################################
+
+# Validate the granularity and integrity of the records:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     COUNT(DISTINCT sales_order_id) AS distinct_orders,
+#     COUNT(DISTINCT sales_order_detail_id) AS distinct_order_details,
+#     COUNT(DISTINCT CONCAT(
+#         CAST(sales_order_id AS STRING), '-',
+#         CAST(sales_order_detail_id AS STRING)
+#     )) AS distinct_order_detail_keys,
+#     SUM(CASE WHEN sales_order_id IS NULL THEN 1 ELSE 0 END) AS null_order_ids,
+#     SUM(CASE WHEN sales_order_detail_id IS NULL THEN 1 ELSE 0 END) AS null_detail_ids,
+#     SUM(order_quantity) AS total_quantity,
+#     SUM(gross_sales_amount) AS gross_sales,
+#     SUM(discount_amount) AS total_discounts,
+#     SUM(net_sales_amount) AS net_sales
+# FROM fea_academy.adventure_works_analytics.fact_sales;
+
+##########################################################################################
+
+# Validate that all foreign keys for the dimensions have been correctly resolved:
+
+# SELECT
+#     COUNT(*) AS total_records,
+#     SUM(CASE WHEN order_date_key IS NULL THEN 1 ELSE 0 END) AS null_order_date_keys,
+#     SUM(CASE WHEN due_date_key IS NULL THEN 1 ELSE 0 END) AS null_due_date_keys,
+#     SUM(CASE WHEN ship_date_key IS NULL THEN 1 ELSE 0 END) AS null_ship_date_keys,
+#     SUM(CASE WHEN product_key IS NULL THEN 1 ELSE 0 END) AS null_product_keys,
+#     SUM(CASE WHEN customer_key IS NULL THEN 1 ELSE 0 END) AS null_customer_keys,
+#     SUM(CASE WHEN credit_card_key IS NULL THEN 1 ELSE 0 END) AS null_credit_card_keys,
+#     SUM(CASE WHEN salesperson_key IS NULL THEN 1 ELSE 0 END) AS null_salesperson_keys,
+#     SUM(CASE WHEN sales_territory_key IS NULL THEN 1 ELSE 0 END) AS null_sales_territory_keys,
+#     SUM(CASE WHEN bill_to_geography_key IS NULL THEN 1 ELSE 0 END) AS null_bill_to_geography_keys,
+#     SUM(CASE WHEN ship_to_geography_key IS NULL THEN 1 ELSE 0 END) AS null_ship_to_geography_keys
+# FROM fea_academy.adventure_works_analytics.fact_sales;
+
+##########################################################################################
+
+# To validate:
+  # 1. Credit card -> Orders not paid for via credit card may have a null `credit_card_id`. We need to confirm this
+  # 2. Salesperson -> It is also possible that orders placed directly through the online channel may not have an associated salesperson
+
+# SELECT
+#     is_online_order,
+#     COUNT(*) AS total_records,
+#     SUM(CASE WHEN credit_card_id IS NULL THEN 1 ELSE 0 END) AS null_credit_cards,
+#     SUM(CASE WHEN salesperson_id IS NULL THEN 1 ELSE 0 END) AS null_salespersons,
+#     SUM(CASE WHEN credit_card_id IS NOT NULL THEN 1 ELSE 0 END) AS records_with_credit_card,
+#     SUM(CASE WHEN salesperson_id IS NOT NULL THEN 1 ELSE 0 END) AS records_with_salesperson
+# FROM fea_academy.adventure_works_analytics.int_sales__order_details
+# GROUP BY is_online_order
+# ORDER BY is_online_order;
+
+# Notes:
+  #Credit card and salesperson foreign keys may contain null values when the original sales transaction has no associated credit card or salesperson. These nulls are preserved to reflect the source data
+
+##########################################################################################
+
+# Validate whether the values ​​in `fact_sales` correspond to the values ​​in `int_sales__order_header_metrics`, by aggregating the items by order before making the comparison
+
+# WITH fact_totals AS (
+#     SELECT
+#         sales_order_id,
+#         SUM(gross_sales_amount) AS gross_sales,
+#         SUM(discount_amount) AS discounts,
+#         SUM(net_sales_amount) AS net_sales
+#     FROM fea_academy.adventure_works_analytics.fact_sales
+#     GROUP BY sales_order_id
+# )
+# SELECT
+#     COUNT(*) AS total_orders,
+#     SUM(fact.gross_sales) AS fact_gross_sales,
+#     SUM(header.subtotal_amount) AS header_subtotal,
+#     SUM(fact.discounts) AS fact_discounts,
+#     SUM(fact.net_sales) AS fact_net_sales,
+#     SUM(header.subtotal_amount) AS header_net_sales,
+#     SUM(fact.net_sales - header.subtotal_amount) AS net_sales_difference
+# FROM fact_totals AS fact
+# INNER JOIN fea_academy.adventure_works_analytics.int_sales__order_header_metrics AS header
+#     ON fact.sales_order_id = header.sales_order_id;
+
+# Notes:
+  # Financial reconciliation identified a residual difference of USD 0.0167 between the aggregated net sales at order detail level and the order header subtotal 
+  # This negligible variance is attributed to rounding and decimal precision differences. Original source values are preserved without artificial adjustments
+
+##########################################################################################
+
+# dbt test --select fact_sales
