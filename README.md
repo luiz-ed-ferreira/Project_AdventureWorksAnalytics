@@ -308,7 +308,7 @@ Project_AdventureWorksAnalytics/
 │   │       ├── rpt_sales__promotion_performance.sql
 │   │       ├── rpt_sales__promotion_performance.yml
 │   │       ├── rpt_sales__reason_analysis.sql
-│   │       └──  rpt_sales__reason_analysis.yml
+│   │       └── rpt_sales__reason_analysis.yml
 │   └── staging/
 │       └── adventure_works/
 │           ├── _adventure_works__sources.yml
@@ -351,6 +351,12 @@ Project_AdventureWorksAnalytics/
 │               └── stg_production__product_category.yml
 │
 ├── tests/
+│   ├── assert_rpt_sales__reason_analysis_unique.sql
+│   ├── assert_promotion_performance_unique.sql
+│   ├── assert_territory_performance_unique.sql
+│   ├── assert_salesperson_performance_unique.sql
+│   ├── assert_geography_performance_unique.sql
+│   ├── assert_customer_performance_unique.sql
 │   ├── assert_product_performance_unique.sql
 │   ├── assert_monthly_performance_unique.sql
 │   ├── assert_fact_sales_unique.sql
