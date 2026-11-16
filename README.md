@@ -34,12 +34,17 @@
 
 In progress [Under Review]
 
+### Status & Improvements
+
+In progress [Under Review]
+
 - [x] Environment and infrastructure setup.
 - [x] Data ingestion from PostgreSQL into Databricks.
 - [x] Source profiling and data exploration.
 - [x] Conceptual and dimensional data modeling.
-- [ ] Data transformations using dbt.
-- [ ] Automated data quality testing and financial reconciliation.
+- [x] Data transformations using dbt (Staging, Intermediate, and Marts).
+- [x] Automated data quality testing and financial reconciliation.
+- [ ] Reporting layer development.
 - [ ] Interactive dashboard development.
 - [ ] Final validation, documentation, and delivery.
 
