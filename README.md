@@ -351,6 +351,8 @@ Project_AdventureWorksAnalytics/
 │               └── stg_production__product_category.yml
 │
 ├── tests/
+│   ├── assert_product_performance_unique.sql
+│   ├── assert_monthly_performance_unique.sql
 │   ├── assert_fact_sales_unique.sql
 │   └── assert_bridge_order_sales_reason_unique.sql
 │

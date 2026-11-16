@@ -1,0 +1,90 @@
+# Reporting documentation:
+
+version: 2
+
+models:
+  - name: rpt_sales__monthly_performance
+    description: >
+      Monthly sales performance overview, including order volume,
+      sales quantity, gross sales, discounts, net sales, and
+      average order value.
+
+    columns:
+      - name: year
+        description: Calendar year.
+        data_tests:
+          - not_null
+
+      - name: month
+        description: Calendar month number.
+        data_tests:
+          - not_null
+
+      - name: month_name
+        description: Calendar month name.
+        data_tests:
+          - not_null
+
+      - name: total_orders
+        description: Number of distinct sales orders.
+        data_tests:
+          - not_null
+
+      - name: total_quantity
+        description: Total quantity of products sold.
+        data_tests:
+          - not_null
+
+      - name: gross_sales
+        description: Total gross sales before discounts.
+        data_tests:
+          - not_null
+
+      - name: total_discounts
+        description: Total discounts applied to sales.
+        data_tests:
+          - not_null
+
+      - name: net_sales
+        description: Total sales after discounts.
+        data_tests:
+          - not_null
+
+      - name: average_order_value
+        description: Net sales divided by the number of distinct orders.
+        data_tests:
+          - not_null
+
+# Reporting validation:
+
+# SELECT
+#     year,
+#     month,
+#     month_name,
+#     total_orders,
+#     total_quantity,
+#     gross_sales,
+#     total_discounts,
+#     net_sales,
+#     average_order_value
+# FROM fea_academy.adventure_works_analytics.rpt_sales__monthly_performance
+# ORDER BY year, month;
+
+# SELECT
+#     COUNT(*) AS total_months,
+#     SUM(total_orders) AS total_orders,
+#     SUM(total_quantity) AS total_quantity,
+#     SUM(gross_sales) AS gross_sales,
+#     SUM(total_discounts) AS total_discounts,
+#     SUM(net_sales) AS net_sales,
+#     SUM(net_sales) / NULLIF(SUM(total_orders), 0) AS overall_aov
+# FROM fea_academy.adventure_works_analytics.rpt_sales__monthly_performance;
+
+# SELECT
+#     COUNT(DISTINCT sales_order_id) AS total_orders,
+#     SUM(order_quantity) AS total_quantity,
+#     SUM(gross_sales_amount) AS gross_sales,
+#     SUM(discount_amount) AS total_discounts,
+#     SUM(net_sales_amount) AS net_sales
+
+# dbt test --select rpt_sales__monthly_performance

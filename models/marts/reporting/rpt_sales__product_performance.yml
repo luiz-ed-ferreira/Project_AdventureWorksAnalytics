@@ -1,0 +1,88 @@
+# Reporting documentation:
+
+
+version: 2
+
+models:
+  - name: rpt_sales__product_performance
+    description: >
+      Product sales performance overview, including product hierarchy,
+      order volume, sales quantity, gross sales, discounts, net sales,
+      and average selling price.
+
+    columns:
+      - name: product_key
+        description: Unique product key.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: product_id
+        description: Source product identifier.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: product_name
+        description: Product name.
+        data_tests:
+          - not_null
+
+      - name: total_orders
+        description: Number of distinct orders containing the product.
+        data_tests:
+          - not_null
+
+      - name: total_quantity
+        description: Total quantity sold for the product.
+        data_tests:
+          - not_null
+
+      - name: gross_sales
+        description: Total gross sales before discounts.
+        data_tests:
+          - not_null
+
+      - name: total_discounts
+        description: Total discounts applied to the product sales.
+        data_tests:
+          - not_null
+
+      - name: net_sales
+        description: Total sales after discounts.
+        data_tests:
+          - not_null
+
+      - name: average_selling_price
+        description: Net sales divided by total quantity sold.
+        data_tests:
+          - not_null
+
+# Reporting validation:
+
+# SELECT
+#     COUNT(*) AS total_products,
+#     COUNT(DISTINCT product_key) AS distinct_products,
+#     SUM(total_orders) AS total_orders,
+#     SUM(total_quantity) AS total_quantity,
+#     SUM(gross_sales) AS gross_sales,
+#     SUM(total_discounts) AS total_discounts,
+#     SUM(net_sales) AS net_sales
+# FROM fea_academy.adventure_works_analytics.rpt_sales__product_performance;
+
+# SELECT
+#     product_id,
+#     product_name,
+#     product_category_name,
+#     product_subcategory_name,
+#     total_orders,
+#     total_quantity,
+#     gross_sales,
+#     total_discounts,
+#     net_sales,
+#     average_selling_price
+# FROM fea_academy.adventure_works_analytics.rpt_sales__product_performance
+# ORDER BY total_quantity DESC
+# LIMIT 10;
+
+# dbt test --select rpt_sales__product_performance
