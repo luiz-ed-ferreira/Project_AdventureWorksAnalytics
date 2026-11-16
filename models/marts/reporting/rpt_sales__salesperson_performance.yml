@@ -1,0 +1,96 @@
+# Reporting documentation:
+
+version: 2
+
+models:
+  - name: rpt_sales__salesperson_performance
+    description: >
+      Sales performance overview by salesperson, including order volume,
+      sales quantity, financial metrics, quota, and historical sales indicators.
+
+    columns:
+      - name: salesperson_key
+        description: Unique salesperson dimension key.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: sales_person_id
+        data_tests:
+          - not_null
+
+      - name: first_name
+        data_tests:
+          - not_null
+
+      - name: last_name
+        data_tests:
+          - not_null
+
+      - name: total_orders
+        data_tests:
+          - not_null
+
+      - name: total_quantity
+        data_tests:
+          - not_null
+
+      - name: gross_sales
+        data_tests:
+          - not_null
+
+      - name: total_discounts
+        data_tests:
+          - not_null
+
+      - name: net_sales
+        data_tests:
+          - not_null
+
+      - name: average_order_value
+        data_tests:
+          - not_null
+
+# Reporting validation:
+
+# SELECT
+#     COUNT(*) AS total_salespeople,
+#     COUNT(DISTINCT salesperson_key) AS distinct_salespeople,
+#     SUM(total_orders) AS total_orders,
+#     SUM(total_quantity) AS total_quantity,
+#     SUM(gross_sales) AS gross_sales,
+#     SUM(total_discounts) AS total_discounts,
+#     SUM(net_sales) AS net_sales
+# FROM fea_academy.adventure_works_analytics.rpt_sales__salesperson_performance;
+
+# SELECT
+#     COUNT(DISTINCT salesperson_key) AS total_salespeople,
+#     COUNT(DISTINCT sales_order_id) AS total_orders,
+#     SUM(order_quantity) AS total_quantity,
+#     SUM(gross_sales_amount) AS gross_sales,
+#     SUM(discount_amount) AS total_discounts,
+#     SUM(net_sales_amount) AS net_sales
+# FROM fea_academy.adventure_works_analytics.fact_sales
+# WHERE salesperson_key IS NOT NULL;
+
+# SELECT
+#     salesperson_key,
+#     sales_person_id,
+#     first_name,
+#     last_name,
+#     job_title,
+#     territory_id,
+#     total_orders,
+#     total_quantity,
+#     gross_sales,
+#     total_discounts,
+#     net_sales,
+#     average_order_value,
+#     sales_quota,
+#     sales_ytd,
+#     sales_last_year
+# FROM fea_academy.adventure_works_analytics.rpt_sales__salesperson_performance
+# ORDER BY net_sales DESC
+# LIMIT 10;
+
+# dbt run --select rpt_sales__salesperson_performance
