@@ -1,0 +1,79 @@
+# Reporting documentation:
+
+version: 2
+
+models:
+  - name: rpt_sales__geography_performance
+    description: >
+      Geographic sales performance at shipping address level,
+      including order volume, sales quantity, and financial metrics.
+
+    columns:
+      - name: geography_key
+        description: Unique shipping geography identifier.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: city
+        data_tests:
+          - not_null
+
+      - name: country_region_name
+        data_tests:
+          - not_null
+
+      - name: total_orders
+        data_tests:
+          - not_null
+
+      - name: total_quantity
+        data_tests:
+          - not_null
+
+      - name: gross_sales
+        data_tests:
+          - not_null
+
+      - name: total_discounts
+        data_tests:
+          - not_null
+
+      - name: net_sales
+        data_tests:
+          - not_null
+
+# Reporting validation:
+
+# SELECT
+#     COUNT(*) AS total_locations,
+#     COUNT(DISTINCT geography_key) AS distinct_locations,
+#     COUNT(DISTINCT city) AS distinct_cities,
+#     COUNT(DISTINCT state_province_name) AS distinct_states,
+#     COUNT(DISTINCT country_region_name) AS distinct_countries,
+#     SUM(total_orders) AS total_orders,
+#     SUM(total_quantity) AS total_quantity,
+#     SUM(gross_sales) AS gross_sales,
+#     SUM(total_discounts) AS total_discounts,
+#     SUM(net_sales) AS net_sales
+# FROM fea_academy.adventure_works_analytics.rpt_sales__geography_performance;
+
+# SELECT
+#     city,
+#     state_province_name,
+#     country_region_name,
+#     COUNT(DISTINCT geography_key) AS total_addresses,
+#     SUM(total_orders) AS total_orders,
+#     SUM(total_quantity) AS total_quantity,
+#     SUM(gross_sales) AS gross_sales,
+#     SUM(total_discounts) AS total_discounts,
+#     SUM(net_sales) AS net_sales
+# FROM fea_academy.adventure_works_analytics.rpt_sales__geography_performance
+# GROUP BY
+#     city,
+#     state_province_name,
+#     country_region_name
+# ORDER BY net_sales DESC
+# LIMIT 10;
+
+# dbt test --select rpt_sales__geography_performance

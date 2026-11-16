@@ -1,0 +1,105 @@
+# Reporting documentation:
+
+version: 2
+
+models:
+  - name: rpt_sales__customer_performance
+    description: >
+      Customer sales performance overview, including customer
+      identification, customer type, order volume, sales quantity,
+      gross sales, discounts, net sales, and average order value.
+
+    columns:
+      - name: customer_key
+        description: Unique customer key.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Source customer identifier.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_name
+        description: Customer name, using store name when available.
+        data_tests:
+          - not_null
+
+      - name: customer_type
+        description: >
+          Customer classification based on person and store associations.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Person', 'Store', 'Both', 'Unknown']
+
+      - name: total_orders
+        description: Number of distinct orders placed by the customer.
+        data_tests:
+          - not_null
+
+      - name: total_quantity
+        description: Total quantity of products purchased.
+        data_tests:
+          - not_null
+
+      - name: gross_sales
+        description: Total gross sales before discounts.
+        data_tests:
+          - not_null
+
+      - name: total_discounts
+        description: Total discounts applied to customer purchases.
+        data_tests:
+          - not_null
+
+      - name: net_sales
+        description: Total sales after discounts.
+        data_tests:
+          - not_null
+
+      - name: average_order_value
+        description: Net sales divided by the number of distinct orders.
+        data_tests:
+          - not_null
+
+# Reporting validation:
+
+# SELECT
+#     COUNT(*) AS total_customers,
+#     COUNT(DISTINCT customer_key) AS distinct_customers,
+#     SUM(total_orders) AS total_customer_orders,
+#     SUM(total_quantity) AS total_quantity,
+#     SUM(gross_sales) AS gross_sales,
+#     SUM(total_discounts) AS total_discounts,
+#     SUM(net_sales) AS net_sales
+# FROM fea_academy.adventure_works_analytics.rpt_sales__customer_performance;
+
+# SELECT
+#     customer_type,
+#     COUNT(*) AS total_customers,
+#     SUM(total_orders) AS total_orders,
+#     SUM(total_quantity) AS total_quantity,
+#     SUM(net_sales) AS net_sales
+# FROM fea_academy.adventure_works_analytics.rpt_sales__customer_performance
+# GROUP BY customer_type
+# ORDER BY customer_type;
+
+# SELECT
+#     customer_id,
+#     customer_name,
+#     customer_type,
+#     total_orders,
+#     total_quantity,
+#     gross_sales,
+#     total_discounts,
+#     net_sales,
+#     average_order_value
+# FROM fea_academy.adventure_works_analytics.rpt_sales__customer_performance
+# ORDER BY net_sales DESC
+# LIMIT 10;
+
+# dbt test --select rpt_sales__customer_performance

@@ -355,7 +355,6 @@ Project_AdventureWorksAnalytics/
 │   ├── assert_promotion_performance_unique.sql
 │   ├── assert_territory_performance_unique.sql
 │   ├── assert_salesperson_performance_unique.sql
-│   ├── assert_geography_performance_unique.sql
 │   ├── assert_customer_performance_unique.sql
 │   ├── assert_product_performance_unique.sql
 │   ├── assert_monthly_performance_unique.sql
