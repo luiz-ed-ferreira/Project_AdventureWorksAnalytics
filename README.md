@@ -209,6 +209,21 @@ The diagram is provided in editable Draw.io format.
 
 > See the [Marts Layer Documentation](docs/data_model/marts_layer.md) for the model inventory, transformation logic, validation results, and financial reconciliation.
 
+### Proposed Reporting Model - Business Questions
+
+| Reporting model | Grain | Business purpose | 
+|---|---|---|
+| `rpt_sales__monthly_performance` | One row per month | Sales trends, growth and average ticket |
+| `rpt_sales__product_performance` | One row per product | Product and category performance |
+| `rpt_sales__customer_performance` | One row per customer | Customer ranking and purchasing behavior |
+| `rpt_sales__geography_performance` | One row per geographic location | Sales by city, state and country |
+| `rpt_sales__salesperson_performance` | One row per salesperson | Sales performance by employee |
+| `rpt_sales__territory_performance` | One row per territory | Commercial regional performance |
+| `rpt_sales__promotion_performance` | One row per special offer | Promotion performance |
+| `rpt_sales__reason_analysis` | One row per sales reason | Analysis of reasons associated with orders |
+
+> All source tables are located in `fea_academy.adventure_works_analytics`.
+
 ### Project Architecture
 
 ```text
@@ -278,6 +293,22 @@ Project_AdventureWorksAnalytics/
 │   │   │   ├── bridge_order_sales_reason.sql
 │   │   │   └── bridge_order_sales_reason.yml
 │   │   └── reporting/
+│   │       ├── rpt_sales__monthly_performance.sql
+│   │       ├── rpt_sales__monthly_performance.yml
+│   │       ├── rpt_sales__product_performance.sql
+│   │       ├── rpt_sales__product_performance.yml
+│   │       ├── rpt_sales__customer_performance.sql
+│   │       ├── rpt_sales__customer_performance.yml
+│   │       ├── rpt_sales__geography_performance.sql
+│   │       ├── rpt_sales__geography_performance.yml
+│   │       ├── rpt_sales__salesperson_performance.sql
+│   │       ├── rpt_sales__salesperson_performance.yml
+│   │       ├── rpt_sales__territory_performance.sql
+│   │       ├── rpt_sales__territory_performance.yml
+│   │       ├── rpt_sales__promotion_performance.sql
+│   │       ├── rpt_sales__promotion_performance.yml
+│   │       ├── rpt_sales__reason_analysis.sql
+│   │       └──  rpt_sales__reason_analysis.yml
 │   └── staging/
 │       └── adventure_works/
 │           ├── _adventure_works__sources.yml
