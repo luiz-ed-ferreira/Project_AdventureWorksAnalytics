@@ -44,7 +44,7 @@ In progress [Under Review]
 - [x] Conceptual and dimensional data modeling.
 - [x] Data transformations using dbt (Staging, Intermediate, and Marts).
 - [x] Automated data quality testing and financial reconciliation.
-- [ ] Reporting layer development.
+- [x] Reporting layer development.
 - [ ] Interactive dashboard development.
 - [ ] Final validation, documentation, and delivery.
 
@@ -185,11 +185,12 @@ The diagram is provided in editable Draw.io format.
 
 ### Data Processing Architecture
 
-> The data pipeline follows a layered architecture based on three main transformation stages (dbt Core):
+> The data pipeline follows a layered architecture based on three main transformation stages (dbt Core) + reporting layer:
 
 - **Staging**: Source data standardization, column selection, renaming, type casting, and basic cleaning.
 - **Intermediate**: Business logic implementation, data integration, and preparation of datasets for dimensional modeling.
-- **Marts**: Business-ready fact and dimension tables designed to support analytical queries, reporting, and BI dashboards.
+- **Marts**: Core Business-ready fact and dimension tables designed to support analytical queries, reporting, and BI dashboards.
+- **Reporting**: Business-oriented aggregated models built on top of the Marts layer to answer the defined business questions and provide curated datasets for Power BI.
 
 #### Staging Layer - Silver layer #1
 
@@ -203,11 +204,19 @@ The diagram is provided in editable Draw.io format.
 
 > See the [Intermediate Layer Documentation](docs/data_model/intermediate_layer.md) for the model inventory, transformation logic, validation results, and financial reconciliation.
 
-#### Marts Layer - Gold layer
+#### Marts Layer - Gold layer #1
 
 - The Marts layer contains 10 models, structured around a dimensional model to support business analysis, reporting, and data-driven decision-making.
 
 > See the [Marts Layer Documentation](docs/data_model/marts_layer.md) for the model inventory, transformation logic, validation results, and financial reconciliation.
+
+#### Reporting Layer - Gold layer #2
+
+- The Reporting layer contains 8 business-oriented dbt models covering monthly, product, customer, geographic, salesperson, territory, promotion, and sales reason performance. The models aggregate the dimensional data according to their analytical grains and have passed their configured dbt data quality tests and custom uniqueness checks.
+- Reporting metrics were reconciled against the underlying `fact_sales` data. For analyses by sales reason, financial metrics are non-additive across reasons because an order may be associated with multiple reasons.
+- Promotion analysis identified product 870, `Water Bottle - 30 oz.`, as the product with the highest purchased quantity in orders associated with the Promotion sales reason, with 546 units.
+
+> See the [Reporting Layer Documentation](docs/data_model/reporting_layer.md) for the model inventory, business metrics, attribution logic, and validation approach.
 
 ### Proposed Reporting Model - Business Questions
 
@@ -236,6 +245,7 @@ Project_AdventureWorksAnalytics/
 │   │   ├── staging_layer.md
 │   │   ├── intermediate_layer.md
 │   │   ├── marts_layer.md
+│   │   ├── reporting_layer.md
 │   │   ├── dimensional_model.drawio
 │   │   ├── dimensional_model.png
 │   │   └── dimensional_model.md
