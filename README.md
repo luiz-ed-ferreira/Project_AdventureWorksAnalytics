@@ -252,6 +252,7 @@ Project_AdventureWorksAnalytics/
 │   │   ├── reporting_layer.md
 │   │   ├── dimensional_model.drawio
 │   │   ├── dimensional_model.png
+│   │   ├── dimensional_model.pdf
 │   │   └── dimensional_model.md
 │   └── project_planning/
 │       └── Anexo B - Modelo de Planejamento de Projeto.docx
