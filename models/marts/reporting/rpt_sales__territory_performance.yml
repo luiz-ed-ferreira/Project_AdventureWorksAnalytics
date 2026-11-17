@@ -1,0 +1,92 @@
+# Reporting documentation:
+
+version: 2
+
+models:
+  - name: rpt_sales__territory_performance
+    description: >
+      Sales performance overview by territory, including order volume,
+      sales quantity, financial metrics, and historical territory indicators.
+
+    columns:
+      - name: sales_territory_key
+        description: Unique sales territory dimension key.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: territory_id
+        data_tests:
+          - not_null
+
+      - name: territory_name
+        data_tests:
+          - not_null
+
+      - name: territory_group
+        data_tests:
+          - not_null
+
+      - name: total_orders
+        data_tests:
+          - not_null
+
+      - name: total_quantity
+        data_tests:
+          - not_null
+
+      - name: gross_sales
+        data_tests:
+          - not_null
+
+      - name: total_discounts
+        data_tests:
+          - not_null
+
+      - name: net_sales
+        data_tests:
+          - not_null
+
+      - name: average_order_value
+        data_tests:
+          - not_null
+          
+# Reporting validation:
+
+# SELECT
+#     COUNT(*) AS total_territories,
+#     COUNT(DISTINCT sales_territory_key) AS distinct_territories,
+#     SUM(total_orders) AS total_orders,
+#     SUM(total_quantity) AS total_quantity,
+#     SUM(gross_sales) AS gross_sales,
+#     SUM(total_discounts) AS total_discounts,
+#     SUM(net_sales) AS net_sales
+# FROM fea_academy.adventure_works_analytics.rpt_sales__territory_performance;
+
+# SELECT
+#     COUNT(DISTINCT sales_territory_key) AS total_territories,
+#     COUNT(DISTINCT sales_order_id) AS total_orders,
+#     SUM(order_quantity) AS total_quantity,
+#     SUM(gross_sales_amount) AS gross_sales,
+#     SUM(discount_amount) AS total_discounts,
+#     SUM(net_sales_amount) AS net_sales
+# FROM fea_academy.adventure_works_analytics.fact_sales
+# WHERE sales_territory_key IS NOT NULL;
+
+# SELECT
+#     territory_id,
+#     territory_name,
+#     country_region_code,
+#     territory_group,
+#     total_orders,
+#     total_quantity,
+#     gross_sales,
+#     total_discounts,
+#     net_sales,
+#     average_order_value,
+#     sales_ytd,
+#     sales_last_year
+# FROM fea_academy.adventure_works_analytics.rpt_sales__territory_performance
+# ORDER BY net_sales DESC;
+
+# dbt test --select rpt_sales__territory_performance

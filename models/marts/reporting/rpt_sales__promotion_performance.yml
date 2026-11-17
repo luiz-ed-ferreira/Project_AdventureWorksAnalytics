@@ -1,0 +1,96 @@
+# Reporting documentation:
+
+version: 2
+
+models:
+  - name: rpt_sales__promotion_performance
+    description: >
+      Product sales performance for orders associated with the
+      Promotion sales reason, including order volume, quantity,
+      and financial metrics.
+
+    columns:
+      - name: product_key
+        description: Unique product dimension key.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: product_id
+        data_tests:
+          - not_null
+
+      - name: product_name
+        data_tests:
+          - not_null
+
+      - name: total_orders
+        data_tests:
+          - not_null
+
+      - name: total_quantity
+        data_tests:
+          - not_null
+
+      - name: gross_sales
+        data_tests:
+          - not_null
+
+      - name: total_discounts
+        data_tests:
+          - not_null
+
+      - name: net_sales
+        data_tests:
+          - not_null
+
+      - name: average_selling_price
+        data_tests:
+          - not_null
+
+# Reporting documentation:
+
+# SELECT
+#     COUNT(*) AS total_products,
+#     COUNT(DISTINCT product_key) AS distinct_products,
+#     SUM(total_orders) AS product_order_incidences,
+#     SUM(total_quantity) AS total_quantity,
+#     SUM(gross_sales) AS gross_sales,
+#     SUM(total_discounts) AS total_discounts,
+#     SUM(net_sales) AS net_sales
+# FROM fea_academy.adventure_works_analytics.rpt_sales__promotion_performance;
+
+# SELECT
+#     product_id,
+#     product_name,
+#     product_subcategory_name,
+#     product_category_name,
+#     total_orders,
+#     total_quantity,
+#     gross_sales,
+#     total_discounts,
+#     net_sales,
+#     average_selling_price
+# FROM fea_academy.adventure_works_analytics.rpt_sales__promotion_performance
+# ORDER BY total_quantity DESC
+# LIMIT 10;
+
+# SELECT
+#     COUNT(DISTINCT f.sales_order_id) AS total_orders,
+#     COUNT(DISTINCT f.product_key) AS distinct_products,
+#     SUM(f.order_quantity) AS total_quantity,
+#     SUM(f.gross_sales_amount) AS gross_sales,
+#     SUM(f.discount_amount) AS total_discounts,
+#     SUM(f.net_sales_amount) AS net_sales
+# FROM fea_academy.adventure_works_analytics.fact_sales AS f
+# INNER JOIN (
+#     SELECT DISTINCT
+#         b.sales_order_id
+#     FROM fea_academy.adventure_works_analytics.bridge_order_sales_reason AS b
+#     INNER JOIN fea_academy.adventure_works_analytics.dim_sales_reason AS r
+#         ON b.sales_reason_key = r.sales_reason_key
+#     WHERE LOWER(r.sales_reason_type) = 'promotion'
+# ) AS p
+#     ON f.sales_order_id = p.sales_order_id;
+
+# dbt test --select rpt_sales__promotion_performance
