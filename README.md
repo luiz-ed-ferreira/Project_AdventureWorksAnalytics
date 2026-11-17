@@ -2,6 +2,10 @@
 
 ### Project Overview
 
+<p align="center">
+  <img src="img/AdventureWorks_Icon.png" alt="Adventure Works Icon">
+</p>
+
 > This project is being developed as part of the final assessment for Indicium AI's Analytics Engineer Certification, based on a fictional e-commerce business case involving Adventure Works.
 
 > The goal is to design and implement an end-to-end Analytics Engineering solution using PostgreSQL, Databricks, Delta Lake, and dbt. The project covers data extraction and loading (EL), data exploration, dimensional modeling, data transformation, automated data quality testing, and financial reconciliation.
