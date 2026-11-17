@@ -257,6 +257,9 @@ Project_AdventureWorksAnalytics/
 │   └── project_planning/
 │       └── Anexo B - Modelo de Planejamento de Projeto.docx
 │
+├── img/
+│   └── AdventureWorks_Icon.png
+│
 ├── exploration/
 │   └── sql/
 │       ├── 01_source_inventory.sql
@@ -376,10 +379,11 @@ Project_AdventureWorksAnalytics/
 │   ├── assert_fact_sales_unique.sql
 │   └── assert_bridge_order_sales_reason_unique.sql
 │
-├── analyses/
+├── dashboards/
+│   └── dashboard_Adventure_Works.pbix
+│
 ├── macros/
 ├── seeds/
-├── snapshots/
 │
 ├── dbt_project.yml
 ├── package-lock.yml
