@@ -1,0 +1,75 @@
+# Reporting documentation:
+
+version: 2
+
+models:
+  - name: rpt_sales__reason_analysis
+    description: >
+      Sales performance analysis by sales reason, including order volume,
+      quantity, and financial metrics. Financial values are non-additive
+      across reasons because an order may have multiple associated reasons.
+
+    columns:
+      - name: sales_reason_key
+        description: Unique sales reason dimension key.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: sales_reason_id
+        data_tests:
+          - not_null
+
+      - name: sales_reason_name
+        data_tests:
+          - not_null
+
+      - name: sales_reason_type
+        data_tests:
+          - not_null
+
+      - name: total_orders
+        data_tests:
+          - not_null
+
+      - name: total_quantity
+        data_tests:
+          - not_null
+
+      - name: gross_sales
+        data_tests:
+          - not_null
+
+      - name: total_discounts
+        data_tests:
+          - not_null
+
+      - name: net_sales
+        data_tests:
+          - not_null
+
+      - name: average_order_value
+        data_tests:
+          - not_null
+
+# Reporting validation:
+
+# SELECT *
+# FROM fea_academy.adventure_works_analytics.rpt_sales__reason_analysis
+# ORDER BY net_sales DESC;
+
+# SELECT
+#     COUNT(DISTINCT f.sales_order_id) AS total_orders,
+#     SUM(f.order_quantity) AS total_quantity,
+#     SUM(f.gross_sales_amount) AS gross_sales,
+#     SUM(f.discount_amount) AS total_discounts,
+#     SUM(f.net_sales_amount) AS net_sales
+# FROM fea_academy.adventure_works_analytics.fact_sales AS f
+# INNER JOIN (
+#     SELECT DISTINCT
+#         sales_order_id
+#     FROM fea_academy.adventure_works_analytics.bridge_order_sales_reason
+# ) AS b
+#     ON f.sales_order_id = b.sales_order_id;
+
+# dbt test --select rpt_sales__reason_analysis
