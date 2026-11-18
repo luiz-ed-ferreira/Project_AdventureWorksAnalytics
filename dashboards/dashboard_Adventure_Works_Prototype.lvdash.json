@@ -1,0 +1,2810 @@
+{
+  "datasets": [
+    {
+      "name": "sales_reason",
+      "displayName": "Sales Reason",
+      "config": {
+        "source": "SELECT\n  b.sales_order_id,\n  r.sales_reason_name,\n  f.product_key,\n  f.customer_key,\n  f.credit_card_key,\n  f.ship_to_geography_key AS geography_key,\n  f.order_date_key,\n  CASE f.order_status\n    WHEN 1 THEN 'In Process'\n    WHEN 2 THEN 'Approved'\n    WHEN 3 THEN 'Backordered'\n    WHEN 4 THEN 'Rejected'\n    WHEN 5 THEN 'Shipped'\n    WHEN 6 THEN 'Cancelled'\n    ELSE 'Unknown'\n  END AS order_status_name,\n  f.order_quantity,\n  f.gross_sales_amount,\n  f.discount_amount,\n  f.net_sales_amount\nFROM fea_academy.adventure_works_analytics.bridge_order_sales_reason AS b\nINNER JOIN fea_academy.adventure_works_analytics.dim_sales_reason AS r\n  ON b.sales_reason_key = r.sales_reason_key\nINNER JOIN fea_academy.adventure_works_analytics.fact_sales AS f\n  ON f.sales_order_id = b.sales_order_id",
+        "measures": [
+          {
+            "name": "total_orders",
+            "expr": "COUNT(DISTINCT sales_order_id)",
+            "comment": "Distinct sales orders associated with the reason"
+          },
+          {
+            "name": "total_quantity",
+            "expr": "SUM(order_quantity)"
+          },
+          {
+            "name": "gross_sales",
+            "expr": "SUM(gross_sales_amount)",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "abbreviation": "compact"
+            }
+          },
+          {
+            "name": "total_discounts",
+            "expr": "SUM(discount_amount)",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "abbreviation": "compact"
+            }
+          },
+          {
+            "name": "net_sales",
+            "expr": "SUM(net_sales_amount)",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "abbreviation": "compact"
+            }
+          },
+          {
+            "name": "average_order_value",
+            "expr": "MEASURE(`net_sales`) / MEASURE(`total_orders`)",
+            "comment": "(Gross Sales - Discounts) / Number of Orders",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 2.0
+              }
+            }
+          }
+        ],
+        "version": "1.1",
+        "comment": "Sales facts expanded to order-line x sales-reason grain via the bridge table",
+        "dimensions": [
+          {
+            "name": "sales_reason_name",
+            "expr": "sales_reason_name"
+          },
+          {
+            "name": "product_key",
+            "expr": "product_key"
+          },
+          {
+            "name": "customer_key",
+            "expr": "customer_key"
+          },
+          {
+            "name": "credit_card_key",
+            "expr": "credit_card_key"
+          },
+          {
+            "name": "geography_key",
+            "expr": "geography_key"
+          },
+          {
+            "name": "order_date_key",
+            "expr": "order_date_key"
+          },
+          {
+            "name": "order_status_name",
+            "expr": "order_status_name"
+          }
+        ]
+      }
+    },
+    {
+      "name": "order_date",
+      "displayName": "Order Date",
+      "config": {
+        "version": "1.1",
+        "source": "fea_academy.adventure_works_analytics.dim_date",
+        "dimensions": [
+          {
+            "name": "date_key",
+            "expr": "date_key"
+          },
+          {
+            "name": "order_date",
+            "expr": "date_day"
+          },
+          {
+            "name": "order_month",
+            "expr": "DATE_TRUNC('MONTH', date_day)"
+          },
+          {
+            "name": "order_year",
+            "expr": "DATE_TRUNC('YEAR', date_day)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "geography",
+      "displayName": "Geography",
+      "config": {
+        "version": "1.1",
+        "source": "fea_academy.adventure_works_analytics.dim_geography",
+        "dimensions": [
+          {
+            "name": "geography_key",
+            "expr": "geography_key"
+          },
+          {
+            "name": "city",
+            "expr": "city"
+          },
+          {
+            "name": "state_province_name",
+            "expr": "state_province_name"
+          },
+          {
+            "name": "country_region_name",
+            "expr": "country_region_name"
+          }
+        ]
+      }
+    },
+    {
+      "name": "credit_card",
+      "displayName": "Credit Card",
+      "config": {
+        "version": "1.1",
+        "source": "fea_academy.adventure_works_analytics.dim_credit_card",
+        "dimensions": [
+          {
+            "name": "credit_card_key",
+            "expr": "credit_card_key"
+          },
+          {
+            "name": "card_type",
+            "expr": "card_type"
+          }
+        ]
+      }
+    },
+    {
+      "name": "customer",
+      "displayName": "Customer",
+      "config": {
+        "version": "1.1",
+        "source": "fea_academy.adventure_works_analytics.dim_customer",
+        "dimensions": [
+          {
+            "name": "customer_key",
+            "expr": "customer_key"
+          },
+          {
+            "name": "customer_name",
+            "expr": "CASE\n  WHEN store_name IS NOT NULL THEN store_name\n  WHEN first_name IS NOT NULL OR last_name IS NOT NULL THEN TRIM(CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')))\n  ELSE CONCAT('Customer ', CAST(customer_id AS STRING))\nEND"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sales",
+      "displayName": "Sales Facts",
+      "config": {
+        "source": "fea_academy.adventure_works_analytics.fact_sales",
+        "measures": [
+          {
+            "name": "total_orders",
+            "expr": "COUNT(DISTINCT sales_order_id)",
+            "comment": "Distinct sales orders"
+          },
+          {
+            "name": "total_quantity",
+            "expr": "SUM(order_quantity)"
+          },
+          {
+            "name": "gross_sales",
+            "expr": "SUM(gross_sales_amount)",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "abbreviation": "compact"
+            }
+          },
+          {
+            "name": "total_discounts",
+            "expr": "SUM(discount_amount)",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "abbreviation": "compact"
+            }
+          },
+          {
+            "name": "net_sales",
+            "expr": "SUM(net_sales_amount)",
+            "synonyms": [
+              "total sales",
+              "sales amount"
+            ],
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "abbreviation": "compact"
+            }
+          },
+          {
+            "name": "average_order_value",
+            "expr": "MEASURE(`net_sales`) / MEASURE(`total_orders`)",
+            "comment": "(Gross Sales - Discounts) / Number of Orders",
+            "format": {
+              "type": "currency",
+              "currencyCode": "USD",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 2.0
+              }
+            }
+          }
+        ],
+        "version": "1.1",
+        "comment": "AdventureWorks order-line sales facts",
+        "dimensions": [
+          {
+            "name": "product_key",
+            "expr": "product_key"
+          },
+          {
+            "name": "customer_key",
+            "expr": "customer_key"
+          },
+          {
+            "name": "credit_card_key",
+            "expr": "credit_card_key"
+          },
+          {
+            "name": "geography_key",
+            "expr": "ship_to_geography_key",
+            "comment": "Ship-to geography of the order"
+          },
+          {
+            "name": "order_date_key",
+            "expr": "order_date_key"
+          },
+          {
+            "name": "order_status_name",
+            "expr": "CASE order_status\n  WHEN 1 THEN 'In Process'\n  WHEN 2 THEN 'Approved'\n  WHEN 3 THEN 'Backordered'\n  WHEN 4 THEN 'Rejected'\n  WHEN 5 THEN 'Shipped'\n  WHEN 6 THEN 'Cancelled'\n  ELSE 'Unknown'\nEND"
+          }
+        ]
+      }
+    },
+    {
+      "name": "product",
+      "displayName": "Product",
+      "config": {
+        "version": "1.1",
+        "source": "fea_academy.adventure_works_analytics.dim_product",
+        "dimensions": [
+          {
+            "name": "product_key",
+            "expr": "product_key"
+          },
+          {
+            "name": "product_name",
+            "expr": "product_name"
+          },
+          {
+            "name": "product_subcategory_name",
+            "expr": "product_subcategory_name"
+          },
+          {
+            "name": "product_category_name",
+            "expr": "product_category_name"
+          }
+        ]
+      }
+    }
+  ],
+  "relationshipGraphs": [
+    {
+      "sources": [
+        {
+          "name": "Sales_Reason",
+          "datasetName": "sales_reason"
+        },
+        {
+          "name": "Order_Date",
+          "datasetName": "order_date"
+        },
+        {
+          "name": "Geography",
+          "datasetName": "geography"
+        },
+        {
+          "name": "Credit_Card",
+          "datasetName": "credit_card"
+        },
+        {
+          "name": "Customer",
+          "datasetName": "customer"
+        },
+        {
+          "name": "Sales_Facts",
+          "datasetName": "sales"
+        },
+        {
+          "name": "Product",
+          "datasetName": "product"
+        }
+      ],
+      "relationships": [
+        {
+          "name": "relationship_0",
+          "from": "Sales_Facts",
+          "to": "Product",
+          "on": "`Sales_Facts`.`product_key` = `Product`.`product_key`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_1",
+          "from": "Sales_Facts",
+          "to": "Customer",
+          "on": "`Sales_Facts`.`customer_key` = `Customer`.`customer_key`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_2",
+          "from": "Sales_Facts",
+          "to": "Credit_Card",
+          "on": "`Sales_Facts`.`credit_card_key` = `Credit_Card`.`credit_card_key`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_3",
+          "from": "Sales_Facts",
+          "to": "Geography",
+          "on": "`Sales_Facts`.`geography_key` = `Geography`.`geography_key`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_4",
+          "from": "Sales_Facts",
+          "to": "Order_Date",
+          "on": "`Sales_Facts`.`order_date_key` = `Order_Date`.`date_key`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_5",
+          "from": "Sales_Reason",
+          "to": "Product",
+          "on": "`Sales_Reason`.`product_key` = `Product`.`product_key`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_6",
+          "from": "Sales_Reason",
+          "to": "Customer",
+          "on": "`Sales_Reason`.`customer_key` = `Customer`.`customer_key`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_7",
+          "from": "Sales_Reason",
+          "to": "Credit_Card",
+          "on": "`Sales_Reason`.`credit_card_key` = `Credit_Card`.`credit_card_key`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_8",
+          "from": "Sales_Reason",
+          "to": "Geography",
+          "on": "`Sales_Reason`.`geography_key` = `Geography`.`geography_key`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_9",
+          "from": "Sales_Reason",
+          "to": "Order_Date",
+          "on": "`Sales_Reason`.`order_date_key` = `Order_Date`.`date_key`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "dbd06290",
+      "displayName": "Sales Performance",
+      "layout": [
+        {
+          "widget": {
+            "name": "kpi_total_orders",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "measure(Sales_Facts__total_orders)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_orders`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Total Orders"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Sales_Facts__total_orders)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_total_quantity",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "measure(Sales_Facts__total_quantity)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_quantity`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Quantity Purchased"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Sales_Facts__total_quantity)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 0,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_gross_sales",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "measure(Sales_Facts__gross_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`gross_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Gross Sales"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Sales_Facts__gross_sales)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_total_discounts",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "measure(Sales_Facts__total_discounts)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_discounts`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Total Discounts"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Sales_Facts__total_discounts)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_net_sales",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Net Sales"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Sales_Facts__net_sales)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 0,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_aov",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "measure(Sales_Facts__average_order_value)",
+                      "expression": "MEASURE(`Sales_Facts`.`average_order_value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Average Order Value"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Sales_Facts__average_order_value)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 0,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_sales_by_category",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Product__product_category_name",
+                      "expression": "`Product`.`product_category_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Net Sales by Product Category"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Product__product_category_name",
+                  "displayName": "Product Category",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__net_sales)",
+                  "displayName": "Net Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_sales_by_card_type",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Credit_Card__card_type",
+                      "expression": "`Credit_Card`.`card_type`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Net Sales by Credit Card Type"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Credit_Card__card_type",
+                  "displayName": "Card Type",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__net_sales)",
+                  "displayName": "Net Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 3,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_orders_by_reason",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Sales_Reason__sales_reason_name",
+                      "expression": "`Sales_Reason`.`sales_reason_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Reason__total_orders)",
+                      "expression": "MEASURE(`Sales_Reason`.`total_orders`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Orders by Sales Reason"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Sales_Reason__sales_reason_name",
+                  "displayName": "Sales Reason",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Reason__total_orders)",
+                  "displayName": "Orders",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 4,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_sales_by_status",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Sales_Facts__order_status_name",
+                      "expression": "`Sales_Facts`.`order_status_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Net Sales by Order Status"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Sales_Facts__order_status_name",
+                  "displayName": "Order Status",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__net_sales)",
+                  "displayName": "Net Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 10,
+            "width": 4,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_sales_by_country",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Geography__country_region_name",
+                      "expression": "`Geography`.`country_region_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Net Sales by Country"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Geography__country_region_name",
+                  "displayName": "Country",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__net_sales)",
+                  "displayName": "Net Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 10,
+            "width": 4,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "table_sales_by_state",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Geography__state_province_name",
+                      "expression": "`Geography`.`state_province_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__total_orders)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_orders`)"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__total_quantity)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_quantity`)"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__gross_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`gross_sales`)"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Sales by State / Province"
+              },
+              "rowsPerPage": 10,
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Geography__state_province_name",
+                    "displayName": "State / Province"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__total_orders)",
+                    "displayName": "Orders"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__total_quantity)",
+                    "displayName": "Quantity"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__gross_sales)",
+                    "displayName": "Gross Sales"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__net_sales)",
+                    "displayName": "Net Sales"
+                  }
+                ],
+                "rowOrder": [
+                  {
+                    "by": "column-reversed",
+                    "field": {
+                      "index": 4
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 17,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "table_sales_by_city",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Geography__city",
+                      "expression": "`Geography`.`city`"
+                    },
+                    {
+                      "name": "Geography__state_province_name",
+                      "expression": "`Geography`.`state_province_name`"
+                    },
+                    {
+                      "name": "Geography__country_region_name",
+                      "expression": "`Geography`.`country_region_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__total_orders)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_orders`)"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Sales by City"
+              },
+              "rowsPerPage": 10,
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Geography__city",
+                    "displayName": "City"
+                  },
+                  {
+                    "fieldName": "Geography__state_province_name",
+                    "displayName": "State / Province"
+                  },
+                  {
+                    "fieldName": "Geography__country_region_name",
+                    "displayName": "Country"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__total_orders)",
+                    "displayName": "Orders"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__net_sales)",
+                    "displayName": "Net Sales"
+                  }
+                ],
+                "rowOrder": [
+                  {
+                    "by": "column-reversed",
+                    "field": {
+                      "index": 4
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 17,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_top_products",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Product__product_name",
+                      "expression": "`Product`.`product_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Top 10 Products by Net Sales"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Product__product_name",
+                  "displayName": "Product",
+                  "scale": {
+                    "categorySize": {
+                      "number": 10,
+                      "type": "number-of-categories"
+                    },
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__net_sales)",
+                  "displayName": "Net Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 25,
+            "width": 12,
+            "height": 8
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "aov_trends",
+      "displayName": "AOV & Sales Trends",
+      "layout": [
+        {
+          "widget": {
+            "name": "line_net_sales_by_month",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Order_Date__order_month",
+                      "expression": "`Order_Date`.`order_month`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Net Sales by Month"
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "Order_Date__order_month",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__net_sales)",
+                  "displayName": "Net Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "line_orders_by_month",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Order_Date__order_month",
+                      "expression": "`Order_Date`.`order_month`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__total_orders)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_orders`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Orders by Month"
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "Order_Date__order_month",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__total_orders)",
+                  "displayName": "Orders",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "line_quantity_by_month",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Order_Date__order_month",
+                      "expression": "`Order_Date`.`order_month`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__total_quantity)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_quantity`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Quantity Purchased by Month"
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "Order_Date__order_month",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__total_quantity)",
+                  "displayName": "Quantity",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 0,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_net_sales_by_year",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Order_Date__order_year",
+                      "expression": "`Order_Date`.`order_year`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Net Sales by Year"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Order_Date__order_year",
+                  "displayName": "Year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__net_sales)",
+                  "displayName": "Net Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 3,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_orders_by_year",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Order_Date__order_year",
+                      "expression": "`Order_Date`.`order_year`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__total_orders)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_orders`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Orders by Year"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Order_Date__order_year",
+                  "displayName": "Year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__total_orders)",
+                  "displayName": "Orders",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 8,
+            "width": 3,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_quantity_by_year",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Order_Date__order_year",
+                      "expression": "`Order_Date`.`order_year`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__total_quantity)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_quantity`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Quantity Purchased by Year"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Order_Date__order_year",
+                  "displayName": "Year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__total_quantity)",
+                  "displayName": "Quantity",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 8,
+            "width": 3,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_aov_by_year",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Order_Date__order_year",
+                      "expression": "`Order_Date`.`order_year`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__average_order_value)",
+                      "expression": "MEASURE(`Sales_Facts`.`average_order_value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "AOV by Year"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Order_Date__order_year",
+                  "displayName": "Year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__average_order_value)",
+                  "displayName": "Average Order Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 8,
+            "width": 3,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "line_aov_by_month",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Order_Date__order_month",
+                      "expression": "`Order_Date`.`order_month`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__average_order_value)",
+                      "expression": "MEASURE(`Sales_Facts`.`average_order_value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "AOV by Month"
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "Order_Date__order_month",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__average_order_value)",
+                  "displayName": "Average Order Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 16,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_aov_by_country",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Geography__country_region_name",
+                      "expression": "`Geography`.`country_region_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__average_order_value)",
+                      "expression": "MEASURE(`Sales_Facts`.`average_order_value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "AOV by Country"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Geography__country_region_name",
+                  "displayName": "Country",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__average_order_value)",
+                  "displayName": "Average Order Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 16,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_aov_by_state",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Geography__state_province_name",
+                      "expression": "`Geography`.`state_province_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__average_order_value)",
+                      "expression": "MEASURE(`Sales_Facts`.`average_order_value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Top 10 States by AOV"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Geography__state_province_name",
+                  "displayName": "State / Province",
+                  "scale": {
+                    "categorySize": {
+                      "number": 10,
+                      "type": "number-of-categories"
+                    },
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__average_order_value)",
+                  "displayName": "Average Order Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 16,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_top_products_aov",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Product__product_name",
+                      "expression": "`Product`.`product_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__average_order_value)",
+                      "expression": "MEASURE(`Sales_Facts`.`average_order_value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Top 10 Products by AOV"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Product__product_name",
+                  "displayName": "Product",
+                  "scale": {
+                    "categorySize": {
+                      "number": 10,
+                      "type": "number-of-categories"
+                    },
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__average_order_value)",
+                  "displayName": "Average Order Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 24,
+            "width": 6,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_top_cities_aov",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Geography__city",
+                      "expression": "`Geography`.`city`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__average_order_value)",
+                      "expression": "MEASURE(`Sales_Facts`.`average_order_value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Top 10 Cities by AOV"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Geography__city",
+                  "displayName": "City",
+                  "scale": {
+                    "categorySize": {
+                      "number": 10,
+                      "type": "number-of-categories"
+                    },
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__average_order_value)",
+                  "displayName": "Average Order Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 24,
+            "width": 6,
+            "height": 8
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "top_rankings",
+      "displayName": "Top Customers, Cities & Promotions",
+      "layout": [
+        {
+          "widget": {
+            "name": "bar_top_customers",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer__customer_name",
+                      "expression": "`Customer`.`customer_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Top 10 Customers by Net Sales"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Customer__customer_name",
+                  "displayName": "Customer",
+                  "scale": {
+                    "categorySize": {
+                      "number": 10,
+                      "type": "number-of-categories"
+                    },
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__net_sales)",
+                  "displayName": "Net Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 8,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_top_cities",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Geography__city",
+                      "expression": "`Geography`.`city`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Top 5 Cities by Net Sales"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Geography__city",
+                  "displayName": "City",
+                  "scale": {
+                    "categorySize": {
+                      "number": 5,
+                      "type": "number-of-categories"
+                    },
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Facts__net_sales)",
+                  "displayName": "Net Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 0,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "table_top_customers",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer__customer_name",
+                      "expression": "`Customer`.`customer_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__total_orders)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_orders`)"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__total_quantity)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_quantity`)"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__gross_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`gross_sales`)"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Top Customers Detail"
+              },
+              "rowsPerPage": 10,
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Customer__customer_name",
+                    "displayName": "Customer"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__total_orders)",
+                    "displayName": "Orders"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__total_quantity)",
+                    "displayName": "Quantity"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__gross_sales)",
+                    "displayName": "Gross Sales"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__net_sales)",
+                    "displayName": "Net Sales"
+                  }
+                ],
+                "rowOrder": [
+                  {
+                    "by": "column-reversed",
+                    "field": {
+                      "index": 4
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 8,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "table_top_cities",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Geography__city",
+                      "expression": "`Geography`.`city`"
+                    },
+                    {
+                      "name": "Geography__state_province_name",
+                      "expression": "`Geography`.`state_province_name`"
+                    },
+                    {
+                      "name": "Geography__country_region_name",
+                      "expression": "`Geography`.`country_region_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__total_orders)",
+                      "expression": "MEASURE(`Sales_Facts`.`total_orders`)"
+                    },
+                    {
+                      "name": "measure(Sales_Facts__net_sales)",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "MEASURE(`Sales_Facts`.`net_sales`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Top Cities Detail"
+              },
+              "rowsPerPage": 10,
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Geography__city",
+                    "displayName": "City"
+                  },
+                  {
+                    "fieldName": "Geography__state_province_name",
+                    "displayName": "State / Province"
+                  },
+                  {
+                    "fieldName": "Geography__country_region_name",
+                    "displayName": "Country"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__total_orders)",
+                    "displayName": "Orders"
+                  },
+                  {
+                    "fieldName": "measure(Sales_Facts__net_sales)",
+                    "displayName": "Net Sales"
+                  }
+                ],
+                "rowOrder": [
+                  {
+                    "by": "column-reversed",
+                    "field": {
+                      "index": 4
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 8,
+            "width": 4,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_promotion_top_products",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Product__product_name",
+                      "expression": "`Product`.`product_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Reason__total_quantity)",
+                      "expression": "MEASURE(`Sales_Reason`.`total_quantity`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`Sales_Reason`.`sales_reason_name` IN ('On Promotion')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Promotion: Top Products by Quantity",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Product__product_name",
+                  "displayName": "Product",
+                  "scale": {
+                    "categorySize": {
+                      "number": 10,
+                      "type": "number-of-categories"
+                    },
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Reason__total_quantity)",
+                  "displayName": "Quantity Purchased",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 16,
+            "width": 8,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_sales_by_reason",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Sales_Reason__sales_reason_name",
+                      "expression": "`Sales_Reason`.`sales_reason_name`"
+                    },
+                    {
+                      "name": "measure(Sales_Reason__net_sales)",
+                      "expression": "MEASURE(`Sales_Reason`.`net_sales`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Net Sales by Sales Reason"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Sales_Reason__sales_reason_name",
+                  "displayName": "Sales Reason",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Sales_Reason__net_sales)",
+                  "displayName": "Net Sales",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 16,
+            "width": 4,
+            "height": 8
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "global_filters",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "filter_sales_date",
+            "queries": [
+              {
+                "name": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f45d2d17f1b17d1cde2e0b798a_order_date",
+                "query": {
+                  "datasetName": "order_date",
+                  "fields": [
+                    {
+                      "name": "order_date",
+                      "expression": "`order_date`"
+                    },
+                    {
+                      "name": "order_date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Sales Date"
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "order_date",
+                    "queryName": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f45d2d17f1b17d1cde2e0b798a_order_date"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_product",
+            "queries": [
+              {
+                "name": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f466331eeda9e4f286d029f270_product_name",
+                "query": {
+                  "datasetName": "product",
+                  "fields": [
+                    {
+                      "name": "product_name",
+                      "expression": "`product_name`"
+                    },
+                    {
+                      "name": "product_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Product"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "product_name",
+                    "queryName": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f466331eeda9e4f286d029f270_product_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_card_type",
+            "queries": [
+              {
+                "name": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f462a71c5c9b04809f9bcab762_card_type",
+                "query": {
+                  "datasetName": "credit_card",
+                  "fields": [
+                    {
+                      "name": "card_type",
+                      "expression": "`card_type`"
+                    },
+                    {
+                      "name": "card_type_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Credit Card Type"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "card_type",
+                    "queryName": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f462a71c5c9b04809f9bcab762_card_type"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_sales_reason",
+            "queries": [
+              {
+                "name": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f45a55115e86174642fb236e56_sales_reason_name",
+                "query": {
+                  "datasetName": "sales_reason",
+                  "fields": [
+                    {
+                      "name": "sales_reason_name",
+                      "expression": "`sales_reason_name`"
+                    },
+                    {
+                      "name": "sales_reason_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Sales Reason"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "sales_reason_name",
+                    "queryName": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f45a55115e86174642fb236e56_sales_reason_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_customer",
+            "queries": [
+              {
+                "name": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f463e113d7b02986af553a7634_customer_name",
+                "query": {
+                  "datasetName": "customer",
+                  "fields": [
+                    {
+                      "name": "customer_name",
+                      "expression": "`customer_name`"
+                    },
+                    {
+                      "name": "customer_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Customer"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "customer_name",
+                    "queryName": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f463e113d7b02986af553a7634_customer_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_order_status",
+            "queries": [
+              {
+                "name": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f464d71be2a094640b5827d7c7_order_status_name",
+                "query": {
+                  "datasetName": "sales",
+                  "fields": [
+                    {
+                      "name": "order_status_name",
+                      "expression": "`order_status_name`"
+                    },
+                    {
+                      "name": "order_status_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f45a55115e86174642fb236e56_order_status_name",
+                "query": {
+                  "datasetName": "sales_reason",
+                  "fields": [
+                    {
+                      "name": "order_status_name",
+                      "expression": "`order_status_name`"
+                    },
+                    {
+                      "name": "order_status_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Order Status",
+                  "fields": []
+                }
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "order_status_name",
+                    "queryName": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f464d71be2a094640b5827d7c7_order_status_name"
+                  },
+                  {
+                    "fieldName": "order_status_name",
+                    "queryName": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f45a55115e86174642fb236e56_order_status_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_country",
+            "queries": [
+              {
+                "name": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f461f61293b22e11bf29121e13_country_region_name",
+                "query": {
+                  "datasetName": "geography",
+                  "fields": [
+                    {
+                      "name": "country_region_name",
+                      "expression": "`country_region_name`"
+                    },
+                    {
+                      "name": "country_region_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Country"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "country_region_name",
+                    "queryName": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f461f61293b22e11bf29121e13_country_region_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_state",
+            "queries": [
+              {
+                "name": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f461f61293b22e11bf29121e13_state_province_name",
+                "query": {
+                  "datasetName": "geography",
+                  "fields": [
+                    {
+                      "name": "state_province_name",
+                      "expression": "`state_province_name`"
+                    },
+                    {
+                      "name": "state_province_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "State / Province"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "state_province_name",
+                    "queryName": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f461f61293b22e11bf29121e13_state_province_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 14,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_city",
+            "queries": [
+              {
+                "name": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f461f61293b22e11bf29121e13_city",
+                "query": {
+                  "datasetName": "geography",
+                  "fields": [
+                    {
+                      "name": "city",
+                      "expression": "`city`"
+                    },
+                    {
+                      "name": "city_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "City"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "city",
+                    "queryName": "dashboards/01f1e2f343b1168d89e59f0ced322c73/datasets/01f1e2f461f61293b22e11bf29121e13_city"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 16,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "visualizationColors": [
+        "#15AFDD",
+        "#2375A8",
+        "#52A870",
+        "#C85070",
+        "#C89930"
+      ],
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
