@@ -3,7 +3,7 @@
 ### Project Overview
 
 <p align="center">
-  <img src="img/AdventureWorks_Icon.png" alt="Adventure Works Icon">
+  <img src="img/AdventureWorks_Icon.png" alt="Adventure Works Icon" height="200" weight="300">
 </p>
 
 > This project is being developed as part of the final assessment for Indicium AI's Analytics Engineer Certification, based on a fictional e-commerce business case involving Adventure Works.
