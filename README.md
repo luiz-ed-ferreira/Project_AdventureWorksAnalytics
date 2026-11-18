@@ -380,6 +380,7 @@ Project_AdventureWorksAnalytics/
 │   └── assert_bridge_order_sales_reason_unique.sql
 │
 ├── dashboards/
+│   ├── dashboard_Adventure_Works_Prototype.lvdash.json
 │   └── dashboard_Adventure_Works.pbix
 │
 ├── macros/
