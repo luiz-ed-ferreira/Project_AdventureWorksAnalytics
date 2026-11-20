@@ -45,7 +45,7 @@ In progress [Under Review]
 - [x] Data transformations using dbt (Staging, Intermediate, and Marts).
 - [x] Automated data quality testing and financial reconciliation.
 - [x] Reporting layer development.
-- [ ] Interactive dashboard development.
+- [x] Interactive dashboard development.
 - [ ] Final validation, documentation, and delivery.
 
 > Attention! All project code, configurations, and technical documentation will be maintained in GitHub to ensure version control, reproducibility, and traceability.
@@ -216,10 +216,6 @@ The diagram is provided in editable Draw.io format.
 - Reporting metrics were reconciled against the underlying `fact_sales` data. For analyses by sales reason, financial metrics are non-additive across reasons because an order may be associated with multiple reasons.
 - Promotion analysis identified product 870, `Water Bottle - 30 oz.`, as the product with the highest purchased quantity in orders associated with the Promotion sales reason, with 546 units.
 
-> See the [Reporting Layer Documentation](docs/data_model/reporting_layer.md) for the model inventory, business metrics, attribution logic, and validation approach.
-
-### Proposed Reporting Model - Business Questions
-
 | Reporting model | Grain | Business purpose | 
 |---|---|---|
 | `rpt_sales__monthly_performance` | One row per month | Sales trends, growth and average ticket |
@@ -230,6 +226,64 @@ The diagram is provided in editable Draw.io format.
 | `rpt_sales__territory_performance` | One row per territory | Commercial regional performance |
 | `rpt_sales__promotion_performance` | One row per special offer | Promotion performance |
 | `rpt_sales__reason_analysis` | One row per sales reason | Analysis of reasons associated with orders |
+
+> See the [Reporting Layer Documentation](docs/data_model/reporting_layer.md) for the model inventory, business metrics, attribution logic, and validation approach.
+
+### Business Intelligence & Dashboard Development
+
+> The Business Intelligence layer was developed to transform the curated analytical data produced by the dbt pipeline into actionable insights and interactive visualizations.
+
+#### Data Sources and Analytical Architecture
+
+> The BI solution leverages both the Marts and Reporting layers from the data warehouse:
+
+- **Marts Layer:** Provides the dimensional data model, including the `fact_sales` table, dimensions, and the `bridge_order_sales_reason` table. These models support flexible analysis across different business dimensions while preserving the defined data grain and relationships (Star Schema).
+- **Reporting Layer:** Provides eight business-oriented analytical models with pre-calculated metrics and consolidated information, simplifying dashboard development and promoting consistency in business definitions.
+
+<p align="center">
+  <img src="img/dashboard_visualization (1).png" alt="Star Schema">
+</p>
+
+> This approach combines the flexibility of dimensional modeling with the convenience of ready-to-use analytical datasets.
+
+#### Power BI Dashboard
+
+> Microsoft Power BI was selected as the primary visualization tool and connected directly to Databricks to consume the curated data.
+
+<p align="center">
+  <img src="img/dashboard_visualization (2).png" alt="Dashboard">
+</p>
+
+> The dashboard is organized into four pages, each designed to address specific business questions:
+
+<p align="center">
+  <img src="img/dashboard_visualization (3).png" alt="Dashboard">
+</p>
+
+1. **Sales Overview:** Analyzes sales performance over time, including order volume, quantities sold, gross sales, discounts, and net sales.
+2. **Product & Customer Analysis:** Identifies top-performing products and customers, evaluates sales contribution, and supports average order value analysis.
+3. **Geographic & Sales Performance:** Explores sales distribution across cities, states, countries, sales territories, and salespeople.
+4. **Analysis of Promotion:** Evaluates promotional performance and identifies the products with the highest quantities sold under promotional conditions.
+
+<p align="center">
+  <img src="img/dashboard_visualization (4).png" alt="Dashboard">
+</p>
+
+> The dashboard enables users to explore business performance through interactive filters and cross-dimensional analysis, supporting the investigation of the project's business questions.
+
+### Databricks BI Prototype and Data Validation
+
+> Before developing the final Power BI dashboard, a BI prototype was created directly in Databricks.
+
+<p align="center">
+  <img src="img/dashboard_visualization (5).png" alt="Prototype">
+</p>
+
+> The prototype served as an intermediate validation environment, allowing analytical queries and aggregated metrics to be explored and compared against the underlying Marts and Reporting tables.
+
+> This validation step helped verify business rules, aggregation logic, metric consistency, and the accuracy of the information before its implementation in Power BI.
+
+> By using Databricks as a validation environment and Power BI as the final visualization platform, the project established an additional layer of confidence in the analytical results presented to business users.
 
 > All source tables are located in `fea_academy.adventure_works_analytics`.
 
@@ -254,6 +308,11 @@ Project_AdventureWorksAnalytics/
 │       └── Anexo B - Modelo de Planejamento de Projeto.docx
 │
 ├── img/
+│   ├── dashboard_visualization (1).png
+│   ├── dashboard_visualization (2).png
+│   ├── dashboard_visualization (3).png
+│   ├── dashboard_visualization (4).png
+│   ├── dashboard_visualization (5).png
 │   └── AdventureWorks_Icon.png
 │
 ├── exploration/
