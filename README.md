@@ -262,8 +262,8 @@ The diagram is provided in editable Draw.io format.
 
 1. **Sales Overview:** Analyzes sales performance over time, including order volume, quantities sold, gross sales, discounts, and net sales.
 2. **Product & Customer Analysis:** Identifies top-performing products and customers, evaluates sales contribution, and supports average order value analysis.
-3. **Geographic & Sales Performance:** Explores sales distribution across cities, states, countries, sales territories, and salespeople.
-4. **Analysis of Promotion:** Evaluates promotional performance and identifies the products with the highest quantities sold under promotional conditions.
+3. **Geographic & Sales Reason:** Explores sales distribution across cities, states, countries, sales territories, and salespeople.
+4. **Promotion Analysis:** Evaluates promotional performance and identifies the products with the highest quantities sold under promotional conditions.
 
 <p align="center">
   <img src="img/dashboard_visualization (4).png" alt="Dashboard">
